@@ -10,12 +10,14 @@ export default function Home() {
   }
 
   return (
-    <div>
-      <UserButton />
-      <button 
-        className="bg-red-300"
-        onClick={handleClick}
-      >Sign in</button>
+    <div className="flex w-full h-full bg-white">
+      <div className="items-center justify-center">
+        <UserButton />
+          <button 
+            className="bg-red-300"
+            onClick={handleClick}
+          >Sign in</button>
+      </div>
     </div>
   );
 }
