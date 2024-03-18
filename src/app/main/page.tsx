@@ -4,7 +4,7 @@ import React from "react";
 
 export default function Home() {
     return (
-        <div className=""flex>    
+        <div className="flex">    
             <div className="flex bg-blue-200 h-[15vh]">
                 <UserButton />
             </div>
