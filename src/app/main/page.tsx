@@ -14,11 +14,18 @@ export default function Home() {
                 </div>
             </div>
             <div className="flex w-[80vw] text-white">
-                <div className="flex w-[70%]">
-                    Login Complete
+                <div className="flex flex-col w-[70%]">
+                    <div className="flex bg-red-300 h-[10%] mt-8 mb-4 items-center ">
+                        search bar
+                    </div>
+                    <div className="flex bg-yellow-300 max-h-dvh">
+                        feed area
+                    </div>
                 </div>
-                <div className="flex w-[30%]">
-                    Side bar ish
+                <div className="flex flex-col w-[30%]">
+                    <div className="flex bg-green-300 justify-center">
+                        side bar-ish
+                    </div>
                 </div>
             </div>
         </div>
