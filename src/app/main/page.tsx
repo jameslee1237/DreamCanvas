@@ -1,5 +1,5 @@
 "use client";
-import { UserButton, useUser } from "@clerk/nextjs";
+import { SignOutButton, UserButton, useUser } from "@clerk/nextjs";
 import React from "react";
 import SearchIcon from '@mui/icons-material/Search';
 import HomeIcon from '@mui/icons-material/Home';
@@ -7,6 +7,8 @@ import MessageIcon from '@mui/icons-material/Message';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LogoutIcon from '@mui/icons-material/Logout';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { OutlinedInput, InputAdornment, createTheme, ThemeProvider } from '@mui/material';
 import { useRouter } from "next/navigation";
 
@@ -66,6 +68,19 @@ export default function Home() {
                             <AccountCircleIcon className="mr-2 mb-1"></AccountCircleIcon>
                             Profile
                         </button>
+                    </div>
+                    <span className="mt-8 bg-black" style={{ width: '15vw', height:"4px"}}></span>
+                    <div className="flex flex-col mt-20 text-[20px] w-[15vw] font-bold">
+                        <button className="py-3 w-[100%] rounded-md hover:bg-gray-400">
+                            <SettingsIcon className="mr-2 mb-1"></SettingsIcon>
+                            Setting
+                        </button>
+                        <SignOutButton>
+                            <button className="py-3 w-[100%] rounded-md hover:bg-red-500">
+                                <LogoutIcon className="mr-2 mb-1"></LogoutIcon>
+                                Sign Out
+                            </button>
+                        </SignOutButton>
                     </div>
                 </div>
             </div>
