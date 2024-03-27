@@ -1,10 +1,11 @@
 "use client";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 import React from "react";
 import SearchIcon from '@mui/icons-material/Search';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+
 
 export default function Home() {
 
@@ -22,15 +23,24 @@ export default function Home() {
         }
     })
 
+    const { isLoaded, isSignedIn, user } = useUser();
+
+    if (!isLoaded || !isSignedIn) {
+        return null
+    }
+
     return (
         <div className="flex min-h-screen bg-[#3c023e]">    
             <div className="flex flex-col w-[20vw]">
                 <div className="flex flex-col items-center mt-8">
-                    <h1 className="font-bold text-white text-[30px] mt-2 mb-14">DreamCanvas</h1>
-                    <UserButton 
-                        afterSignOutUrl="/"
-                    />
+                    <h1 className="font-bold text-white text-[30px] mt-2 mb-6">DreamCanvas</h1>
                     <span className="mt-4 bg-black" style={{ width: '15vw', height:"4px"}}></span>
+                    <div className="flex flex-col">
+                        <button>Home</button>
+                        <button>Message</button>
+                        <button>Notifications</button>
+                        <button>Create Post</button>
+                    </div>
                 </div>
             </div>
             <div className="flex w-[80vw] text-white">
@@ -54,8 +64,27 @@ export default function Home() {
                     </div>
                 </div>
                 <div className="flex flex-col w-[30%]">
-                    <div className="flex bg-green-300 justify-center min-h-screen">
-                        side bar-ish
+                    <div className="flex min-h-screen">
+                        <div className="flex mt-10 ml-6">    
+                            <UserButton 
+                                afterSignOutUrl="/"
+                                appearance={{
+                                    elements: {
+                                        userButtonAvatarBox: 
+                                            "size-12",
+                                    },
+                                }}
+                            />
+                            <div className="flex flex-col">
+                                <div className="grid grid-cols-2">
+                                    <h1 className="text-white ml-4 mr-2">{user.firstName}</h1>
+                                    <h1>{user.lastName}</h1>
+                                </div>
+                                <div>
+                                    <h1 className="text-slate-400 ml-4">{user.username}</h1>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
