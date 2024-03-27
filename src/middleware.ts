@@ -11,7 +11,11 @@ export default authMiddleware({
 
     if (!auth.userId && req.url.includes("/main")) {
       return NextResponse.redirect(new URL('/', req.url))
-    } 
+    }
+
+    if (auth.userId && req.nextUrl.pathname === "/") {
+      return NextResponse.redirect(new URL('/main', req.url));
+    }
   }
 });
  

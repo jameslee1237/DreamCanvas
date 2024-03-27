@@ -2,12 +2,22 @@
 import { UserButton, useUser } from "@clerk/nextjs";
 import React from "react";
 import SearchIcon from '@mui/icons-material/Search';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputAdornment from '@mui/material/InputAdornment';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-
+import HomeIcon from '@mui/icons-material/Home';
+import MessageIcon from '@mui/icons-material/Message';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { OutlinedInput, InputAdornment, createTheme, ThemeProvider } from '@mui/material';
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+    const router = useRouter();
+    const handleprofilebutton = () => {
+        router.push("/user-page")
+    }
+    const handlehomebutton = () => {
+        router.push("/main")
+    }
 
     const theme = createTheme({
         components: {
@@ -35,11 +45,27 @@ export default function Home() {
                 <div className="flex flex-col items-center mt-8">
                     <h1 className="font-bold text-white text-[30px] mt-2 mb-6">DreamCanvas</h1>
                     <span className="mt-4 bg-black" style={{ width: '15vw', height:"4px"}}></span>
-                    <div className="flex flex-col">
-                        <button>Home</button>
-                        <button>Message</button>
-                        <button>Notifications</button>
-                        <button>Create Post</button>
+                    <div className="flex flex-col justify-between mt-8 h-[45vh] w-[15vw] text-[20px] font-bold">
+                        <button onClick={handlehomebutton} className="py-3 w-[100%] rounded-md hover:bg-slate-500 flex justify-center">
+                            <HomeIcon className="mr-2 mt-1"></HomeIcon>
+                            Home
+                        </button>
+                        <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
+                            <MessageIcon className="mr-2"></MessageIcon>
+                            Message
+                        </button>
+                        <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
+                            <NotificationsActiveIcon className="mr-2"></NotificationsActiveIcon>
+                            Notifications
+                        </button>
+                        <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
+                            <AddCircleIcon className="mr-2 mb-1"></AddCircleIcon>
+                            Create Post
+                        </button>
+                        <button onClick={handleprofilebutton} className="py-3 w-[100%] rounded-md hover:bg-slate-500">
+                            <AccountCircleIcon className="mr-2 mb-1"></AccountCircleIcon>
+                            Profile
+                        </button>
                     </div>
                 </div>
             </div>
@@ -63,8 +89,8 @@ export default function Home() {
                         feed area
                     </div>
                 </div>
-                <div className="flex flex-col w-[30%]">
-                    <div className="flex min-h-screen">
+                <div className="flex w-[30%]">
+                    <div className="flex flex-col min-h-screen">
                         <div className="flex mt-10 ml-6">    
                             <UserButton 
                                 afterSignOutUrl="/"
@@ -74,6 +100,8 @@ export default function Home() {
                                             "size-12",
                                     },
                                 }}
+                                userProfileMode="navigation"
+                                userProfileUrl="/user-profile"
                             />
                             <div className="flex flex-col">
                                 <div className="grid grid-cols-2">
@@ -84,6 +112,9 @@ export default function Home() {
                                     <h1 className="text-slate-400 ml-4">{user.username}</h1>
                                 </div>
                             </div>
+                        </div>
+                        <div className="flex mt-4 ml-4">
+                            <h1 className="text-[#cdc6c6]">Suggested user</h1>
                         </div>
                     </div>
                 </div>
