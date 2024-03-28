@@ -1,11 +1,9 @@
 import React from "react";
 
-const UserCard = () => {
+export default function MessagePage() {
     return (
         <div>
-            User Card
+            This is message page
         </div>
     )
 }
-
-export default UserCard;

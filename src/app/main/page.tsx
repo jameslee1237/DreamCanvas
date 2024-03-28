@@ -11,6 +11,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { OutlinedInput, InputAdornment, createTheme, ThemeProvider } from '@mui/material';
 import { useRouter } from "next/navigation";
+import FeedCard from "@/components/FeedCard";
+import UserCard from "@/components/UserCard";
 
 export default function Home() {
     const router = useRouter();
@@ -19,6 +21,12 @@ export default function Home() {
     }
     const handlehomebutton = () => {
         router.push("/main")
+    }
+    const handlemessageButton = () => {
+        router.push("/message")
+    }
+    const handlesettingButton = () => {
+        router.push("/user-profile")
     }
 
     const theme = createTheme({
@@ -52,7 +60,7 @@ export default function Home() {
                             <HomeIcon className="mr-2 mt-1"></HomeIcon>
                             Home
                         </button>
-                        <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
+                        <button onClick={handlemessageButton} className="py-3 w-[100%] rounded-md hover:bg-slate-500">
                             <MessageIcon className="mr-2"></MessageIcon>
                             Message
                         </button>
@@ -71,7 +79,7 @@ export default function Home() {
                     </div>
                     <span className="mt-8 bg-black" style={{ width: '15vw', height:"4px"}}></span>
                     <div className="flex flex-col mt-20 text-[20px] w-[15vw] font-bold">
-                        <button className="py-3 w-[100%] rounded-md hover:bg-gray-400">
+                        <button onClick={handlesettingButton} className="py-3 w-[100%] rounded-md hover:bg-gray-400">
                             <SettingsIcon className="mr-2 mb-1"></SettingsIcon>
                             Setting
                         </button>
@@ -100,8 +108,9 @@ export default function Home() {
                         </ThemeProvider>
                         <button className="bg-green-400 hover:bg-green-700 rounded-md px-2 py-1 ml-4">Search</button>
                     </div>
-                    <div className="flex bg-yellow-300 min-h-[84vh]">
-                        feed area
+                    <div className="flex flex-col min-h-[84vh]">
+                        <FeedCard />
+                        <FeedCard />
                     </div>
                 </div>
                 <div className="flex w-[30%]">
@@ -130,6 +139,9 @@ export default function Home() {
                         </div>
                         <div className="flex mt-4 ml-4">
                             <h1 className="text-[#cdc6c6]">Suggested user</h1>
+                        </div>
+                        <div className="flex flex-col mt-4 ml-4">
+                            <UserCard />
                         </div>
                     </div>
                 </div>
