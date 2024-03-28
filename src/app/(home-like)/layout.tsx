@@ -8,6 +8,12 @@ import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+  
 
 export default function ExperienceDetailLayout ({
     children,
@@ -42,10 +48,15 @@ export default function ExperienceDetailLayout ({
                                 <MessageIcon className="mr-2"></MessageIcon>
                                 Message
                             </button>
-                            <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
-                                <NotificationsActiveIcon className="mr-2"></NotificationsActiveIcon>
-                                Notifications
-                            </button>
+                            <Popover>
+                                <PopoverTrigger>
+                                    <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
+                                        <NotificationsActiveIcon className="mr-2"></NotificationsActiveIcon>
+                                        Notifications
+                                    </button>
+                                </PopoverTrigger>
+                                <PopoverContent>Notification section</PopoverContent>
+                            </Popover>     
                             <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
                                 <AddCircleIcon className="mr-2 mb-1"></AddCircleIcon>
                                 Create Post
