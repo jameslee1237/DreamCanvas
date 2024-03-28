@@ -13,8 +13,9 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import Link from "next/link";
   
-
 export default function ExperienceDetailLayout ({
     children,
 } : {
@@ -49,18 +50,24 @@ export default function ExperienceDetailLayout ({
                                 Message
                             </button>
                             <Popover>
-                                <PopoverTrigger>
+                                <PopoverTrigger asChild>
                                     <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
                                         <NotificationsActiveIcon className="mr-2"></NotificationsActiveIcon>
                                         Notifications
                                     </button>
                                 </PopoverTrigger>
-                                <PopoverContent>Notification section</PopoverContent>
-                            </Popover>     
-                            <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
-                                <AddCircleIcon className="mr-2 mb-1"></AddCircleIcon>
-                                Create Post
-                            </button>
+                                <PopoverContent>
+                                    <ScrollArea className="h-full w-full rounded-md">
+                                        Notifications will be here
+                                    </ScrollArea>
+                                </PopoverContent>
+                            </Popover>
+                            <Link href="?modal=true">
+                                <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
+                                    <AddCircleIcon className="mr-2 mb-1"></AddCircleIcon>
+                                    Create Post
+                                </button>
+                            </Link>   
                             <button onClick={handleprofilebutton} className="py-3 w-[100%] rounded-md hover:bg-slate-500">
                                 <AccountCircleIcon className="mr-2 mb-1"></AccountCircleIcon>
                                 Profile

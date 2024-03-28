@@ -4,7 +4,17 @@ import React from "react";
 import SearchIcon from '@mui/icons-material/Search';
 import { OutlinedInput, InputAdornment, createTheme, ThemeProvider } from '@mui/material';
 import FeedCard from "@/components/FeedCard";
-import UserCard from "@/components/UserCard";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+  } from "@/components/ui/card";
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
+  } from "@/components/ui/avatar";
 
 export default function Home() {
 
@@ -43,7 +53,9 @@ export default function Home() {
                                 size="small"
                             />
                         </ThemeProvider>
-                        <button className="bg-green-400 hover:bg-green-700 rounded-md px-2 py-1 ml-4">Search</button>
+                        <button className="bg-green-400 hover:bg-green-700 rounded-md px-2 py-1 ml-4">
+                            Search
+                        </button>
                     </div>
                     <div className="flex flex-col min-h-[84vh]">
                         <FeedCard />
@@ -74,11 +86,28 @@ export default function Home() {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex mt-4 ml-4">
-                            <h1 className="text-[#cdc6c6]">Suggested user</h1>
-                        </div>
                         <div className="flex flex-col mt-4 ml-4">
-                            <UserCard />
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Suggested user</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="flex items-center gap-4">
+                                        <Avatar className="hidden h-12 w-12 sm:flex">
+                                            <AvatarImage src="/avatars/01.png" alt="Avatar" />
+                                            <AvatarFallback>OM</AvatarFallback>
+                                        </Avatar>
+                                        <div className="grid gap-1">
+                                            <h1 className="text-sm font-semibold leading-none">
+                                                Olivia Martin
+                                            </h1>
+                                            <h1 className="text-sm text-muted-foreground text-gray-600">
+                                                o_martin_0987
+                                            </h1>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
                         </div>
                     </div>
                 </div>
