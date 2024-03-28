@@ -57,13 +57,14 @@ export default function Home() {
                             Search
                         </button>
                     </div>
-                    <div className="flex flex-col min-h-[84vh]">
+                    <div className="flex flex-col items-center">
+                        <FeedCard />
                         <FeedCard />
                         <FeedCard />
                     </div>
                 </div>
-                <div className="flex w-[30%]">
-                    <div className="flex flex-col min-h-screen">
+                <div className="flex w-[30vw]">
+                    <div className="flex flex-col">
                         <div className="flex mt-10 ml-6">    
                             <UserButton 
                                 afterSignOutUrl="/"

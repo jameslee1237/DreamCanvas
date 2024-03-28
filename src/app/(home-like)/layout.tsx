@@ -36,7 +36,7 @@ export default function ExperienceDetailLayout ({
     return (
         <>
             <div className="flex min-h-screen bg-[#3c023e]">    
-                <div className="flex flex-col w-[20vw]">
+                <div className="flex flex-col w-[20vw] fixed">
                     <div className="flex flex-col items-center mt-8">
                         <h1 className="font-bold text-white text-[30px] mt-2 mb-6">DreamCanvas</h1>
                         <span className="mt-4 bg-black" style={{ width: '15vw', height:"4px"}}></span>
@@ -88,7 +88,7 @@ export default function ExperienceDetailLayout ({
                         </div>
                     </div>
                 </div>
-                <div>
+                <div className="flex ml-[18.5vw]">
                     {children}
                 </div>
             </div>
