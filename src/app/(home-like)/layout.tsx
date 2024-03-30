@@ -38,7 +38,7 @@ export default function ExperienceDetailLayout ({
             <div className="flex min-h-screen bg-[#3c023e]">    
                 <div className="flex flex-col w-[20vw] fixed">
                     <div className="flex flex-col items-center mt-8">
-                        <h1 className="font-bold text-white text-[30px] mt-2 mb-6">DreamCanvas</h1>
+                        <h1 className="font-bold text-white text-[30px] mt-2 mb-6">Dream<span className="font-bold text-[30px] text-[#FECC3D]">Canvas</span></h1>
                         <span className="mt-4 bg-black" style={{ width: '15vw', height:"4px"}}></span>
                         <div className="flex flex-col justify-between mt-8 h-[45vh] w-[15vw] text-[20px] font-bold">
                             <button onClick={handlehomebutton} className="py-3 w-[100%] rounded-md hover:bg-slate-500 flex justify-center">
