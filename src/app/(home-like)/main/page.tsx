@@ -1,5 +1,5 @@
 "use client";
-import { UserButton, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import React from "react";
 import SearchIcon from '@mui/icons-material/Search';
 import { OutlinedInput, InputAdornment, createTheme, ThemeProvider } from '@mui/material';
@@ -15,8 +15,13 @@ import {
     AvatarFallback,
     AvatarImage,
   } from "@/components/ui/avatar";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+    const router = useRouter();
+    const handleAvatarClick = () => {
+        router.push("/user-page")
+    }
 
     const theme = createTheme({
         components: {
@@ -66,17 +71,10 @@ export default function Home() {
                 <div className="flex w-[30vw]">
                     <div className="flex flex-col">
                         <div className="flex mt-10 ml-6">    
-                            <UserButton 
-                                afterSignOutUrl="/"
-                                appearance={{
-                                    elements: {
-                                        userButtonAvatarBox: 
-                                            "size-12",
-                                    },
-                                }}
-                                userProfileMode="navigation"
-                                userProfileUrl="/user-profile"
-                            />
+                            <Avatar className="h-14 w-14">
+                                <AvatarImage src={user.imageUrl} onClick={handleAvatarClick}></AvatarImage>
+                                <AvatarFallback className="bg-green-200" onClick={handleAvatarClick}>JL</AvatarFallback>
+                            </Avatar>
                             <div className="flex flex-col">
                                 <div className="grid grid-cols-2">
                                     <h1 className="text-white ml-4 mr-2">{user.firstName}</h1>

@@ -14,7 +14,17 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import Link from "next/link";
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+  } from "@/components/ui/dialog"
+import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
   
 export default function ExperienceDetailLayout ({
     children,
@@ -31,6 +41,9 @@ export default function ExperienceDetailLayout ({
     }
     const handlemessageButton = () => {
         router.push("/message")
+    }
+    const handlesettingsButton = () => {
+        router.push("/user-profile")
     }
 
     return (
@@ -62,12 +75,27 @@ export default function ExperienceDetailLayout ({
                                     </ScrollArea>
                                 </PopoverContent>
                             </Popover>
-                            <Link href="?modal=true">
-                                <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
-                                    <AddCircleIcon className="mr-2 mb-1"></AddCircleIcon>
-                                    Create Post
-                                </button>
-                            </Link>   
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
+                                        <AddCircleIcon className="mr-2 mb-1"></AddCircleIcon>
+                                        Create Post
+                                    </button>
+                                </DialogTrigger>
+                                <DialogContent className="h-[80vh] w-[35vw]">
+                                    <DialogHeader>
+                                        <DialogTitle className="text-center py-4">
+                                            Create a new post
+                                            <Separator className="mt-4" />
+                                        </DialogTitle>
+                                    </DialogHeader>
+                                        <div className="flex flex-col w-full justify-center items-center gap-1.5">
+                                            <Label htmlFor="picture">Picture</Label>
+                                            <Input id="picture" type="file" />
+                                            <button type="submit" className="py-2 px-1 rounded-md bg-green-300">Save changes</button>
+                                        </div>
+                                </DialogContent>
+                            </Dialog>
                             <button onClick={handleprofilebutton} className="py-3 w-[100%] rounded-md hover:bg-slate-500">
                                 <AccountCircleIcon className="mr-2 mb-1"></AccountCircleIcon>
                                 Profile
@@ -75,7 +103,7 @@ export default function ExperienceDetailLayout ({
                         </div>
                         <span className="mt-8 bg-black" style={{ width: '15vw', height:"4px"}}></span>
                         <div className="flex flex-col mt-20 text-[20px] w-[15vw] font-bold">
-                            <button className="py-3 w-[100%] rounded-md hover:bg-gray-400">
+                            <button onClick={handlesettingsButton} className="py-3 w-[100%] rounded-md hover:bg-gray-400">
                                 <SettingsIcon className="mr-2 mb-1"></SettingsIcon>
                                 Setting
                             </button>
