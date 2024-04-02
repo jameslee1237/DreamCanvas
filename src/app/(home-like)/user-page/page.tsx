@@ -61,10 +61,10 @@ export default function UserPage() {
                             <TabsTrigger value="password">Saved Posts</TabsTrigger>
                         </TabsList>
                         <TabsContent value="account" className="text-center">
-                            <PostCard postid="1" />
+                            <PostCard postid="/temp1.png" />
                         </TabsContent>
                         <TabsContent value="password" className="text-center">
-                            <PostCard postid="2" />
+                            <PostCard postid="/temp2.png" />
                         </TabsContent>
                     </Tabs>
                 </div>
