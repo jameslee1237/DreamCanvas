@@ -23,14 +23,26 @@ const ConversationBox = (
         <div className={`flex w-[350px] p-3 items-center space-x-3 hover:bg-slate-300 ${selected ? 'bg-white' : 'bg-inherit'}`}
              onClick={handleClick}>
             {props.conversation === "Conversation 1" ? 
-                <Avatar>
-                    <AvatarImage src="user.avatar" />
-                    <AvatarFallback>OM</AvatarFallback>
-                </Avatar> : 
-                <Avatar>
-                    <AvatarImage src="user.avatar" />
-                    <AvatarFallback>JL</AvatarFallback>
-                </Avatar>}
+                <div className="flex">
+                    <Avatar>
+                        <AvatarImage src="user.avatar" />
+                        <AvatarFallback>OM</AvatarFallback>
+                    </Avatar>
+                    <div className="flex ml-4 mt-2">
+                        <h1>Oliver Manson</h1>
+                    </div>
+                </div> 
+                : 
+                <div className="flex">
+                    <Avatar>
+                        <AvatarImage src="user.avatar" />
+                        <AvatarFallback>JL</AvatarFallback>
+                    </Avatar>
+                    <div className="flex ml-4 mt-2">
+                        <h1>James Lee</h1>
+                    </div>
+                </div> 
+            }
         </div>
     )
 }

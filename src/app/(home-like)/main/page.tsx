@@ -16,6 +16,7 @@ import {
     AvatarImage,
   } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
     const router = useRouter();
@@ -104,6 +105,7 @@ export default function Home() {
                                                 o_martin_0987
                                             </h1>
                                         </div>
+                                        <Button size="sm" className="ml-14">follow</Button>
                                     </div>
                                 </CardContent>
                             </Card>
