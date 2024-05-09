@@ -9,6 +9,7 @@ interface Params {
 export default function MessagePage({
     params } : { params: Params }
 ) {
+
     return (
         <div className="flex flex-col relative w-[57vw] overflow-hidden">
             <div className="flex w-full h-[15vh] bg-white">
