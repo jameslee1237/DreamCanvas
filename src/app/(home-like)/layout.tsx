@@ -40,7 +40,7 @@ export default function ExperienceDetailLayout ({
         router.push("/main")
     }
     const handlemessageButton = () => {
-        router.push("/message")
+        router.push("/message/1")
     }
     const handlesettingsButton = () => {
         router.push("/user-profile")

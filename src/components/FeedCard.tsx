@@ -27,6 +27,7 @@ import {
   } from "@/components/ui/dialog"
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
+import Comment from "./Comment";
   
 
 const FeedCard = () => {
@@ -117,7 +118,7 @@ const hasTypedFull = (e: ChangeEvent<HTMLInputElement>) => {
                                                         height={1668}
                                                     />
                                                 </div>
-                                                <div className="flex flex-col w-1/2">
+                                                <div className="flex flex-col w-1/2 max-h-full">
                                                     <div className="flex ml-4 mt-4 mb-4">
                                                         <Avatar className="hidden h-9 w-9 sm:flex">
                                                             <AvatarImage src="/avatars/01.png" alt="Avatar" />
@@ -130,15 +131,25 @@ const hasTypedFull = (e: ChangeEvent<HTMLInputElement>) => {
                                                         </div>
                                                     </div>
                                                     <Separator />
-                                                    <div className="flex ml-4 mt-4 mb-4 h-[75%]">
-                                                        <ScrollArea>
-                                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit
-                                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit
-                                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit
-                                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit
-                                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit
-                                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit
-
+                                                    <div className="flex w-full h-[75%] max-h-full">
+                                                        <ScrollArea className="w-full mt-4 mb-4 max-h-[75vh] overflow-hidden">
+                                                            <Comment comment="Comment1" />
+                                                            <Separator className="mt-4" />
+                                                            <Comment comment="Comment2" />
+                                                            <Separator className="mt-4" />
+                                                            <Comment comment="Comment3" />
+                                                            <Separator className="mt-4" />
+                                                            <Comment comment="Comment4" />
+                                                            <Separator className="mt-4" />
+                                                            <Comment comment="Comment5" />
+                                                            <Separator className="mt-4" />
+                                                            <Comment comment="Comment6" />
+                                                            <Separator className="mt-4" />
+                                                            <Comment comment="Comment7" />
+                                                            <Separator className="mt-4" />
+                                                            <Comment comment="Comment8" />
+                                                            <Separator className="mt-4" />
+                                                            <Comment comment="Comment9" /> 
                                                         </ScrollArea>
                                                     </div>
                                                     <Separator />
