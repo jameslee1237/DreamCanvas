@@ -22,7 +22,7 @@ const ConversationBox = (
     return (
         <div className={`flex w-[350px] p-3 items-center space-x-3 hover:bg-slate-300 ${selected ? 'bg-white' : 'bg-inherit'}`}
              onClick={handleClick}>
-            {props.conversation === "Conversation 1" ? 
+            {props.id === "1" ? 
                 <div className="flex">
                     <Avatar>
                         <AvatarImage src="" />
