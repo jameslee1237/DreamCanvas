@@ -25,6 +25,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import Notification from "@/components/Notification";
   
 export default function ExperienceDetailLayout ({
     children,
@@ -45,6 +46,8 @@ export default function ExperienceDetailLayout ({
     const handlesettingsButton = () => {
         router.push("/user-profile")
     }
+
+    const temp_notif = ["ag_8761 has followed you", "you have one unread message"]
 
     return (
         <>
@@ -71,7 +74,12 @@ export default function ExperienceDetailLayout ({
                                 </PopoverTrigger>
                                 <PopoverContent>
                                     <ScrollArea className="h-full w-full rounded-md">
-                                        Notifications will be here
+                                        <p className="text-[30px] font-bold ml-2">Notifications</p>
+                                        {temp_notif.map((notif) => (
+                                            <div className="flex-col w-full flex p-3 hover:bg-gray-300">
+                                                <Notification notification={notif} />
+                                            </div>   
+                                        ))}
                                     </ScrollArea>
                                 </PopoverContent>
                             </Popover>
