@@ -25,7 +25,7 @@ const ConversationBox = (
             {props.conversation === "Conversation 1" ? 
                 <div className="flex">
                     <Avatar>
-                        <AvatarImage src="user.avatar" />
+                        <AvatarImage src="" />
                         <AvatarFallback>OM</AvatarFallback>
                     </Avatar>
                     <div className="flex ml-4 mt-2">
@@ -35,7 +35,7 @@ const ConversationBox = (
                 : 
                 <div className="flex">
                     <Avatar>
-                        <AvatarImage src="user.avatar" />
+                        <AvatarImage src="" />
                         <AvatarFallback>JL</AvatarFallback>
                     </Avatar>
                     <div className="flex ml-4 mt-2">
