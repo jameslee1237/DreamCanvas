@@ -3,7 +3,7 @@ import { NextResponse, NextRequest } from "next/server";
  
 export default authMiddleware({
   publicRoutes: ['/', '/sign-in', '/sign-up'],
-  ignoredRoutes: ['/no-auth-in-this-route'],
+  ignoredRoutes: ['/api/webhooks(.*)'],
   afterAuth(auth, req, evt) {
     if (auth.userId && (req.nextUrl.pathname === "/sign-in" || req.nextUrl.pathname === "/sign-up")) {
       return NextResponse.redirect(new URL('/main', req.url));
