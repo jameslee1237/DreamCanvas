@@ -44,5 +44,15 @@ export async function POST (req: Request) {
 
     const eventType = evt.type
 
-    console.log("payload data: \n\n", payload.data)
+    if (eventType === 'user.created') {
+        await prisma.user.create({
+            data: {
+                clerkId: payload.data.id,
+                firstName: payload.data.firstName,
+                lastName: payload.data.lastName,
+                email: payload.data.email,
+                userName: payload.data.username
+            }
+        })
+    }
 }
