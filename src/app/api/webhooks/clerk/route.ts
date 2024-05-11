@@ -15,4 +15,34 @@ export async function POST (req: Request) {
 
     const headerPayload = headers()
     const svix_id = headerPayload.get('svix-id')
+    const svix_signature = headerPayload.get('svix-signature')
+    const svix_timestamp = headerPayload.get('svix-timestamp')
+
+    if (!svix_id || !svix_signature || !svix_timestamp) {
+        return new Response("Error - no header found", { status: 400 })
+    }
+
+    const payload = await req.json()
+    const body = JSON.stringify(payload)
+
+    const wh = new Webhook(WEBHOOK_SECRET)
+
+    let evt: WebhookEvent
+
+    try {
+        evt = wh.verify(body, {
+            "svix-id": svix_id,
+            "svix-timestamp": svix_timestamp,
+            "svix-signature": svix_signature
+        }) as WebhookEvent
+    } catch (err) {
+        console.log('Error verifying webhook: ', err)
+        return new Response('Error occured', {
+            status: 400
+        })
+    }
+
+    const eventType = evt.type
+
+    console.log("payload data: \n\n", payload.data)
 }

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "push-db": "dotenv -e .env.local -- npx prisma db push"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.29.9",
@@ -24,6 +25,7 @@
     "@radix-ui/react-tabs": "^1.0.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "dotenv": "^16.4.5",
     "lucide-react": "^0.363.0",
     "mongodb": "^6.6.1",
     "mongoose": "^8.2.1",
