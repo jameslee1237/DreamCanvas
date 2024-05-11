@@ -55,4 +55,12 @@ export async function POST (req: Request) {
             }
         })
     }
+
+    if (eventType === 'user.updated') {
+        await prisma.user.update({
+            where: {
+                clerkId: payload.data.id,
+            }, 
+            
+            
 }
