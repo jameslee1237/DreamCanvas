@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "push-db": "dotenv -e .env.local -- npx prisma db push"
+    "push-db": "dotenv -e .env.local -- npx prisma db push",
+    "studio": "dotenv -e .env.local -- npx prisma studio"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.29.9",

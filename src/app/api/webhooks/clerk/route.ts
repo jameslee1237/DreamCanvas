@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import { WebhookEvent } from '@clerk/nextjs/server';
 
 import { prisma } from '@/lib/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 export async function POST (req: Request) {
     const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
@@ -48,19 +49,53 @@ export async function POST (req: Request) {
         await prisma.user.create({
             data: {
                 clerkId: payload.data.id,
-                firstName: payload.data.firstName,
-                lastName: payload.data.lastName,
-                email: payload.data.email,
+                firstName: payload.data.first_name,
+                lastName: payload.data.last_name,
+                email: payload.data.email_addresses[0].email_address,
                 userName: payload.data.username
             }
         })
     }
 
     if (eventType === 'user.updated') {
-        await prisma.user.update({
+        try{
+            await prisma.user.update({
+                where: {
+                    clerkId: payload.data.id,
+                }, 
+                data: {
+                    firstName: payload.data.first_name,
+                    lastName: payload.data.last_name,
+                    email: payload.data.email_addresses[0].email_address,
+                    userName: payload.data.username
+                }
+            })
+        }
+        catch (e) {
+            if (e instanceof PrismaClientKnownRequestError) {
+                await prisma.user.create({
+                    data: {
+                        clerkId: payload.data.id,
+                        firstName: payload.data.first_name,
+                        lastName: payload.data.last_name,
+                        email: payload.data.email_addresses[0].email_address,
+                        userName: payload.data.username
+                    }
+                })
+            }
+            else {
+                console.log(e)
+            }
+        }
+    }
+    
+    if (eventType === 'user.deleted') {
+        await prisma.user.delete({
             where: {
-                clerkId: payload.data.id,
-            }, 
-            
-            
+                clerkId: payload.data.id
+            }
+        })
+    }
+    
+    return new Response('', { status: 200 })
 }
