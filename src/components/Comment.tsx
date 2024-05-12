@@ -6,7 +6,7 @@ const Comment = ({comment} : {comment: string}) => {
         <div className="flex w-full ml-4 items-center mt-4">
             <div className="flex">
                 <Avatar className="hidden h-9 w-9 sm:flex">
-                    <AvatarImage src="/avatars/01.png" alt="Avatar" />
+                    <AvatarImage src="" alt="Avatar" />
                     <AvatarFallback className="bg-green-200">PL</AvatarFallback>
                 </Avatar>
                 <div className="grid gap-1">

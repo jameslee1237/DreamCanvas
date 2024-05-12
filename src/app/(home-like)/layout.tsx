@@ -27,7 +27,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Notification from "@/components/Notification";
 import { useEffect, useState } from "react";
-import { get } from "http";
   
 export default function ExperienceDetailLayout ({
     children,
@@ -52,22 +51,33 @@ export default function ExperienceDetailLayout ({
     const temp_notif = ["ag_8761 has followed you", "you have one unread message"]
 
     const { isSignedIn, user, isLoaded } = useUser();
-    const [ userData, setUserData] = useState({});
+    const [ userData, setUserData] = useState({ 
+        id : "",
+        clerkId : "",
+        firstName: "", 
+        lastName: "",
+        userName: "",
+        email: "",
+        followedByIds: [],
+        followingIds: []
+    });
     const [ loading, setLoading ] = useState(true);
 
-    const getUserData = async () => {
-        if (isLoaded) {
-            const response = await fetch(`/api/user/${user?.id}`);
-            const data = await response.json();
-            setUserData(data);
-            console.log(data, userData);
-            setLoading(false);
-        }
-    }
-
     useEffect(() => {
+        const getUserData = async () => {
+            if (isLoaded) {
+                const response = await fetch(`/api/user/${user?.id}`);
+                const data = await response.json();
+                setUserData(prevUserData => ({
+                    ...prevUserData,
+                    ...data
+                }));
+                setLoading(false);
+            }
+        };
+
         getUserData();
-    }, [user])
+    }, [isLoaded, user?.id])
 
     return loading || !isLoaded ? 
         <>
@@ -89,7 +99,7 @@ export default function ExperienceDetailLayout ({
                                 <MessageIcon className="mr-2"></MessageIcon>
                                 Message
                             </button>
-                            <div className="flex">
+                            <div className="flex flex-col">
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
@@ -110,7 +120,7 @@ export default function ExperienceDetailLayout ({
                                 </Popover>
                                 <Dialog>
                                     <DialogTrigger asChild>
-                                        <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
+                                        <button className="py-3 w-[100%] rounded-md mt-2 hover:bg-slate-500">
                                             <AddCircleIcon className="mr-2 mb-1"></AddCircleIcon>
                                             Create Post
                                         </button>

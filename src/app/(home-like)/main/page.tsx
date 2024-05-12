@@ -1,4 +1,5 @@
 "use client";
+
 import { useUser } from "@clerk/nextjs";
 import React from "react";
 import SearchIcon from '@mui/icons-material/Search';
@@ -87,7 +88,7 @@ export default function Home() {
                                     <h1 className="text-white ml-4 mr-2">{user.firstName}</h1>
                                     <h1>{user.lastName}</h1>
                                 </div>
-                                <div>
+                                <div className="flex">
                                     <h1 className="text-slate-400 ml-4">{user.username}</h1>
                                 </div>
                             </div>

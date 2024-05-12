@@ -1,4 +1,5 @@
-    import prisma from "@/lib/client";
+import prisma from "@/lib/client";
+import { NextResponse } from "next/server";
 
     interface Params {
         id: string;
@@ -12,9 +13,9 @@
                     clerkId: id
                 }
             })
-            return new Response(JSON.stringify(User), {status: 200})
+            return NextResponse.json(User);
         }
         catch (error){
-            return new Response("Could not get user data", {status: 500})
+            console.log(error);
         }
     }

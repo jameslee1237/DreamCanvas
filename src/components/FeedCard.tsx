@@ -56,7 +56,7 @@ const hasTypedFull = (e: ChangeEvent<HTMLInputElement>) => {
                 <CardHeader>
                     <div className="flex gap-4">
                         <Avatar className="hidden h-9 w-9 sm:flex">
-                            <AvatarImage src="/avatars/01.png" alt="Avatar" />
+                            <AvatarImage src="" alt="Avatar" />
                             <AvatarFallback>OM</AvatarFallback>
                         </Avatar>
                         <div className="grid gap-1">
@@ -75,6 +75,7 @@ const hasTypedFull = (e: ChangeEvent<HTMLInputElement>) => {
                             width: "100%",
                             height: "auto",
                         }}
+                        priority={true}
                         width={2500}
                         height={1668}
                     />
@@ -114,6 +115,7 @@ const hasTypedFull = (e: ChangeEvent<HTMLInputElement>) => {
                                                             width: "100%",
                                                             height: "auto",
                                                         }}
+                                                        priority={true}
                                                         width={2500}
                                                         height={1668}
                                                     />
@@ -121,7 +123,7 @@ const hasTypedFull = (e: ChangeEvent<HTMLInputElement>) => {
                                                 <div className="flex flex-col w-1/2 max-h-full">
                                                     <div className="flex ml-4 mt-4 mb-4">
                                                         <Avatar className="hidden h-9 w-9 sm:flex">
-                                                            <AvatarImage src="/avatars/01.png" alt="Avatar" />
+                                                            <AvatarImage src="" alt="Avatar" />
                                                             <AvatarFallback className="bg-green-200">OM</AvatarFallback>
                                                         </Avatar>
                                                         <div className="grid gap-1">
