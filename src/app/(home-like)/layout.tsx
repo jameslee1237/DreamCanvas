@@ -65,24 +65,26 @@ export default function ExperienceDetailLayout ({
                                 <MessageIcon className="mr-2"></MessageIcon>
                                 Message
                             </button>
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
-                                        <NotificationsActiveIcon className="mr-2"></NotificationsActiveIcon>
-                                        Notifications
-                                    </button>
-                                </PopoverTrigger>
-                                <PopoverContent>
-                                    <ScrollArea className="h-full w-full rounded-md">
-                                        <p className="text-[30px] font-bold ml-2">Notifications</p>
-                                        {temp_notif.map((notif) => (
-                                            <div className="flex-col w-full flex p-3 hover:bg-gray-300">
-                                                <Notification notification={notif} />
-                                            </div>   
-                                        ))}
-                                    </ScrollArea>
-                                </PopoverContent>
-                            </Popover>
+                            <div className="flex">
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
+                                            <NotificationsActiveIcon className="mr-2"></NotificationsActiveIcon>
+                                            Notifications
+                                        </button>
+                                    </PopoverTrigger>
+                                    <PopoverContent>
+                                        <ScrollArea className="h-full w-full rounded-md">
+                                            <p className="text-[30px] font-bold ml-2">Notifications</p>
+                                            {temp_notif.map((notif) => (
+                                                <div className="flex-col w-full flex p-3 hover:bg-gray-300" key={notif}>
+                                                    <Notification notification={notif} />
+                                                </div>   
+                                            ))}
+                                        </ScrollArea>
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
                             <Dialog>
                                 <DialogTrigger asChild>
                                     <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
