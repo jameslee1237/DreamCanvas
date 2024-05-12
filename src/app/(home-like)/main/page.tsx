@@ -63,9 +63,11 @@ export default function Home() {
                                 size="small"
                             />
                         </ThemeProvider>
-                        <button className="bg-green-400 hover:bg-green-700 rounded-md px-2 py-1 ml-4">
-                            Search
-                        </button>
+                        <div className="flex">
+                            <button className="bg-green-400 hover:bg-green-700 rounded-md px-2 py-1 ml-4">
+                                Search
+                            </button>
+                        </div>
                     </div>
                     <div className="flex flex-col items-center">
                         <FeedCard />
@@ -98,7 +100,7 @@ export default function Home() {
                                 <CardContent>
                                     <div className="flex items-center gap-4">
                                         <Avatar className="hidden h-12 w-12 sm:flex">
-                                            <AvatarImage src="/avatars/01.png" alt="Avatar" />
+                                            <AvatarImage src="" alt="Avatar" />
                                             <AvatarFallback>OM</AvatarFallback>
                                         </Avatar>
                                         <div className="grid gap-1">

@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { SignOutButton } from "@clerk/nextjs";
+import { SignOutButton, useUser } from "@clerk/nextjs";
 import HomeIcon from '@mui/icons-material/Home';
 import MessageIcon from '@mui/icons-material/Message';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -26,6 +26,8 @@ import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Notification from "@/components/Notification";
+import { useEffect, useState } from "react";
+import { get } from "http";
   
 export default function ExperienceDetailLayout ({
     children,
@@ -49,7 +51,29 @@ export default function ExperienceDetailLayout ({
 
     const temp_notif = ["ag_8761 has followed you", "you have one unread message"]
 
-    return (
+    const { isSignedIn, user, isLoaded } = useUser();
+    const [ userData, setUserData] = useState({});
+    const [ loading, setLoading ] = useState(true);
+
+    const getUserData = async () => {
+        if (isLoaded) {
+            const response = await fetch(`/api/user/${user?.id}`);
+            const data = await response.json();
+            setUserData(data);
+            console.log(data, userData);
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        getUserData();
+    }, [user])
+
+    return loading || !isLoaded ? 
+        <>
+            <p>Loading...</p>
+        </> 
+    : (
         <>
             <div className="flex min-h-screen bg-[#3c023e]">    
                 <div className="flex flex-col w-[20vw] fixed">
@@ -84,28 +108,28 @@ export default function ExperienceDetailLayout ({
                                         </ScrollArea>
                                     </PopoverContent>
                                 </Popover>
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
+                                            <AddCircleIcon className="mr-2 mb-1"></AddCircleIcon>
+                                            Create Post
+                                        </button>
+                                    </DialogTrigger>
+                                    <DialogContent className="h-[80vh] w-[35vw]">
+                                        <DialogHeader>
+                                            <DialogTitle className="text-center py-4">
+                                                Create a new post
+                                                <Separator className="mt-4" />
+                                            </DialogTitle>
+                                        </DialogHeader>
+                                            <div className="flex flex-col w-full justify-center items-center gap-1.5">
+                                                <Label htmlFor="picture">Picture</Label>
+                                                <Input id="picture" type="file" />
+                                                <button type="submit" className="py-2 px-1 rounded-md bg-green-300">Save changes</button>
+                                            </div>
+                                    </DialogContent>
+                                </Dialog>
                             </div>
-                            <Dialog>
-                                <DialogTrigger asChild>
-                                    <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
-                                        <AddCircleIcon className="mr-2 mb-1"></AddCircleIcon>
-                                        Create Post
-                                    </button>
-                                </DialogTrigger>
-                                <DialogContent className="h-[80vh] w-[35vw]">
-                                    <DialogHeader>
-                                        <DialogTitle className="text-center py-4">
-                                            Create a new post
-                                            <Separator className="mt-4" />
-                                        </DialogTitle>
-                                    </DialogHeader>
-                                        <div className="flex flex-col w-full justify-center items-center gap-1.5">
-                                            <Label htmlFor="picture">Picture</Label>
-                                            <Input id="picture" type="file" />
-                                            <button type="submit" className="py-2 px-1 rounded-md bg-green-300">Save changes</button>
-                                        </div>
-                                </DialogContent>
-                            </Dialog>
                             <button onClick={handleprofilebutton} className="py-3 w-[100%] rounded-md hover:bg-slate-500">
                                 <AccountCircleIcon className="mr-2 mb-1"></AccountCircleIcon>
                                 Profile
