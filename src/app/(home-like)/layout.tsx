@@ -102,10 +102,12 @@ export default function ExperienceDetailLayout ({
                             <div className="flex flex-col">
                                 <Popover>
                                     <PopoverTrigger asChild>
-                                        <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
-                                            <NotificationsActiveIcon className="mr-2"></NotificationsActiveIcon>
-                                            Notifications
-                                        </button>
+                                        <div className="flex">
+                                            <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
+                                                <NotificationsActiveIcon className="mr-2"></NotificationsActiveIcon>
+                                                Notifications
+                                            </button>
+                                        </div>
                                     </PopoverTrigger>
                                     <PopoverContent>
                                         <ScrollArea className="h-full w-full rounded-md">
@@ -120,10 +122,12 @@ export default function ExperienceDetailLayout ({
                                 </Popover>
                                 <Dialog>
                                     <DialogTrigger asChild>
-                                        <button className="py-3 w-[100%] rounded-md mt-2 hover:bg-slate-500">
-                                            <AddCircleIcon className="mr-2 mb-1"></AddCircleIcon>
-                                            Create Post
-                                        </button>
+                                        <div className="flex">
+                                            <button className="py-3 w-[100%] rounded-md mt-2 hover:bg-slate-500">
+                                                <AddCircleIcon className="mr-2 mb-1"></AddCircleIcon>
+                                                Create Post
+                                            </button>
+                                        </div>
                                     </DialogTrigger>
                                     <DialogContent className="h-[80vh] w-[35vw]">
                                         <DialogHeader>

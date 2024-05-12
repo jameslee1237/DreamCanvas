@@ -90,14 +90,14 @@ const hasTypedFull = (e: ChangeEvent<HTMLInputElement>) => {
                 </CardContent>
                 <CardFooter>
                     <div className="flex flex-col w-full">
-                        <div>
+                        <div className="flex">
                             <h1 className="text-white">
                                 First Comment
                             </h1>
                         </div>
-                        <div>
+                        <div className="flex">
                             <Dialog>
-                                <DialogTrigger>
+                                <DialogTrigger asChild>
                                     <button className="text-gray-500">
                                         See more comments
                                     </button>
