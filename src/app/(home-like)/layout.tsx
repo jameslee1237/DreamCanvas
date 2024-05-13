@@ -1,33 +1,15 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { SignOutButton, useUser } from "@clerk/nextjs";
+import { SignOutButton } from "@clerk/nextjs";
 import HomeIcon from '@mui/icons-material/Home';
 import MessageIcon from '@mui/icons-material/Message';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import {
-    Dialog,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-  } from "@/components/ui/dialog"
-import { Separator } from "@/components/ui/separator";
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import Notification from "@/components/Notification";
-import { useEffect, useState } from "react";
-  
+import { getCurrentUser } from "../actions/getCurrentUser";
+import CreatePostButton from "@/components/CreatePostButton";
+import NotifButton from "@/components/NotifButton";
+
 export default function ExperienceDetailLayout ({
     children,
 } : {
@@ -50,34 +32,7 @@ export default function ExperienceDetailLayout ({
 
     const temp_notif = ["ag_8761 has followed you", "you have one unread message"]
 
-    const { isSignedIn, user, isLoaded } = useUser();
-    const [ userData, setUserData] = useState({ 
-        id : "",
-        clerkId : "",
-        firstName: "", 
-        lastName: "",
-        userName: "",
-        email: "",
-        followedByIds: [],
-        followingIds: []
-    });
-    const [ loading, setLoading ] = useState(true);
-
-    useEffect(() => {
-        const getUserData = async () => {
-            if (isLoaded) {
-                const response = await fetch(`/api/user/${user?.id}`);
-                const data = await response.json();
-                setUserData(prevUserData => ({
-                    ...prevUserData,
-                    ...data
-                }));
-                setLoading(false);
-            }
-        };
-
-        getUserData();
-    }, [isLoaded, user?.id])
+    const { isLoaded, loading, userData } = getCurrentUser();
 
     return loading || !isLoaded ? 
         <>
@@ -100,49 +55,8 @@ export default function ExperienceDetailLayout ({
                                 Message
                             </button>
                             <div className="flex flex-col">
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <div className="flex">
-                                            <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
-                                                <NotificationsActiveIcon className="mr-2"></NotificationsActiveIcon>
-                                                Notifications
-                                            </button>
-                                        </div>
-                                    </PopoverTrigger>
-                                    <PopoverContent>
-                                        <ScrollArea className="h-full w-full rounded-md">
-                                            <p className="text-[30px] font-bold ml-2">Notifications</p>
-                                            {temp_notif.map((notif) => (
-                                                <div className="flex-col w-full flex p-3 hover:bg-gray-300" key={notif}>
-                                                    <Notification notification={notif} />
-                                                </div>   
-                                            ))}
-                                        </ScrollArea>
-                                    </PopoverContent>
-                                </Popover>
-                                <Dialog>
-                                    <DialogTrigger asChild>
-                                        <div className="flex">
-                                            <button className="py-3 w-[100%] rounded-md mt-2 hover:bg-slate-500">
-                                                <AddCircleIcon className="mr-2 mb-1"></AddCircleIcon>
-                                                Create Post
-                                            </button>
-                                        </div>
-                                    </DialogTrigger>
-                                    <DialogContent className="h-[80vh] w-[35vw]">
-                                        <DialogHeader>
-                                            <DialogTitle className="text-center py-4">
-                                                Create a new post
-                                                <Separator className="mt-4" />
-                                            </DialogTitle>
-                                        </DialogHeader>
-                                            <div className="flex flex-col w-full justify-center items-center gap-1.5">
-                                                <Label htmlFor="picture">Picture</Label>
-                                                <Input id="picture" type="file" />
-                                                <button type="submit" className="py-2 px-1 rounded-md bg-green-300">Save changes</button>
-                                            </div>
-                                    </DialogContent>
-                                </Dialog>
+                                <NotifButton />
+                                <CreatePostButton />
                             </div>
                             <button onClick={handleprofilebutton} className="py-3 w-[100%] rounded-md hover:bg-slate-500">
                                 <AccountCircleIcon className="mr-2 mb-1"></AccountCircleIcon>
