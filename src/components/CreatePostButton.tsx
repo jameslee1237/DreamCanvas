@@ -11,11 +11,19 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useEffect, useState } from "react";
+import { Textarea } from "./ui/textarea";
 
-const CreatePostButton = () => {
+interface CreatePostButtonProps {
+    userData: object;
+}
+
+const CreatePostButton = (
+    props : CreatePostButtonProps
+) => {
     const [img, setImg] = useState<File | null>(null);
     const [encoded, setEncoded] = useState<string | null>("");
     const [open, setOpen] = useState(false);
+    const [content, setContent] = useState("");
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -24,6 +32,10 @@ const CreatePostButton = () => {
         else{
             setImg(null);
         }
+    }
+
+    const handlePost = () => {
+        
     }
 
     const handleOpenChange = () => {
@@ -62,16 +74,19 @@ const CreatePostButton = () => {
                     <DialogHeader>
                         <DialogTitle className="text-center py-4">
                             Create a new post
-                            <Separator className="mt-4" />
                         </DialogTitle>
                     </DialogHeader>
-                    <div className="flex w-full h-[50vh]">
-                        <img src={encoded as string} alt="preview" className="object-contain" />
+                    <Separator />
+                    <div className="flex flex-col items-center space-y-10">
+                        <Textarea className="ring-0 focus-visible:ring-0 rounded-none border-0 w-[99%]" 
+                                  placeholder="Write your own feed" />
+                        {encoded ? <img src={encoded as string} alt="preview" className="object-contain max-h-[30vh]" /> 
+                                 : <p>Select an image</p>}
                     </div>
                     <div className="flex flex-col w-full justify-center items-center gap-1.5">
                         <Label htmlFor="picture">Picture</Label>
                         <Input id="picture" type="file" accept="image/*" onChange={handleChange} />
-                        <button type="submit" className="py-2 px-1 rounded-md bg-green-300">Save changes</button>
+                        <button type="submit" className="py-2 px-1 rounded-md bg-green-300" onClick={handlePost}>Save changes</button>
                     </div>
                 </DialogContent>
             </Dialog>

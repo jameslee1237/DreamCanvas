@@ -1,11 +1,15 @@
 import Image from "next/image";
 import React from "react";
 
-const PostCard = ({postid} : {postid: string}) => {
+interface PostCardProps {
+    postid: string;
+}
+
+const PostCard = (props : PostCardProps) => {
     return (
         <div>
             <Image
-                src={postid}
+                src={props.postid}
                 alt="image"
                 sizes="20vw"
                 style={{
