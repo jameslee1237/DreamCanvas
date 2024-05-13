@@ -30,8 +30,6 @@ export default function ExperienceDetailLayout ({
         router.push("/user-profile")
     }
 
-    const temp_notif = ["ag_8761 has followed you", "you have one unread message"]
-
     const { isLoaded, loading, userData } = getCurrentUser();
 
     return loading || !isLoaded ? 
