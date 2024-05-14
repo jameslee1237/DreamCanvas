@@ -32,7 +32,6 @@ export default function ExperienceDetailLayout({
     }
     
     const { isLoaded, loading, userData } = getCurrentUser();
-    console.log(typeof userData)
 
     return loading || !isLoaded ?
         (

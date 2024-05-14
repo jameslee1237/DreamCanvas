@@ -71,14 +71,10 @@ const CreatePostButton = (
                     </div>
                 </DialogTrigger>
                 <DialogContent className="h-[80vh] w-[35vw]">
-                    <DialogHeader>
-                        <DialogTitle className="text-center py-4">
-                            Create a new post
-                        </DialogTitle>
-                    </DialogHeader>
-                    <Separator />
-                    <div className="flex flex-col items-center space-y-10">
-                        <Textarea className="ring-0 focus-visible:ring-0 rounded-none border-0 w-[99%]" 
+                    <div className="flex flex-col items-center text-center">
+                        <p className="text-xl font-bold mt-4">Create Post</p>
+                        <Separator className="mt-4"/>
+                        <Textarea className="ring-0 focus-visible:ring-0 rounded-none border-0 w-[99%] mb-6" 
                                   placeholder="Write your own feed" />
                         {encoded ? <img src={encoded as string} alt="preview" className="object-contain max-h-[30vh]" /> 
                                  : <p>Select an image</p>}
