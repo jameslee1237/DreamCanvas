@@ -1,3 +1,16 @@
+"use client";
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 import {
     Dialog,
     DialogContent,
@@ -5,43 +18,63 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-  } from "@/components/ui/dialog"
+} from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useEffect, useState } from "react";
 import { Textarea } from "./ui/textarea";
+import { Button } from "@/components/ui/button";
 
 interface CreatePostButtonProps {
     userData: object;
 }
 
+const FormSchema = z.object({
+    feed: z
+        .string()
+        .min(10, {
+            message: "Feed content must be at least 10 characters.",
+        })
+        .max(500, {
+            message: "Feed content must not be longer than 500 characters.",
+        }),
+})
+
 const CreatePostButton = (
-    props : CreatePostButtonProps
+    props: CreatePostButtonProps
 ) => {
     const [img, setImg] = useState<File | null>(null);
     const [encoded, setEncoded] = useState<string | null>("");
     const [open, setOpen] = useState(false);
-    const [content, setContent] = useState("");
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             setImg(e.target.files[0]);
         }
-        else{
+        else {
             setImg(null);
         }
     }
 
-    const handlePost = () => {
-        
+    const form = useForm<z.infer<typeof FormSchema>>({
+        resolver: zodResolver(FormSchema),
+        defaultValues: {
+            feed: "",
+        },
+    })
+
+    function onSubmit(data: z.infer<typeof FormSchema>) {
+        console.log(data.feed);
+
     }
 
     const handleOpenChange = () => {
         if (!open) {
             setImg(null);
             setEncoded(null);
+            form.reset();
         }
         setOpen(!open);
     }
@@ -71,18 +104,36 @@ const CreatePostButton = (
                     </div>
                 </DialogTrigger>
                 <DialogContent className="h-[80vh] w-[35vw]">
-                    <div className="flex flex-col items-center text-center">
+                    <div className="flex flex-col items-center h-full text-center">
                         <p className="text-xl font-bold mt-4">Create Post</p>
-                        <Separator className="mt-4"/>
-                        <Textarea className="ring-0 focus-visible:ring-0 rounded-none border-0 w-[99%] mb-6" 
-                                  placeholder="Write your own feed" />
-                        {encoded ? <img src={encoded as string} alt="preview" className="object-contain max-h-[30vh]" /> 
-                                 : <p>Select an image</p>}
-                    </div>
-                    <div className="flex flex-col w-full justify-center items-center gap-1.5">
-                        <Label htmlFor="picture">Picture</Label>
-                        <Input id="picture" type="file" accept="image/*" onChange={handleChange} />
-                        <button type="submit" className="py-2 px-1 rounded-md bg-green-300" onClick={handlePost}>Save changes</button>
+                        <Separator className="mt-4" />
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full h-full space-y-6">
+                                <FormField
+                                    control={form.control}
+                                    name="feed"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                <Textarea className="ml-0.5 ring-0 focus-visible:ring-0 rounded-none border-0 w-[99%] mb-6"
+                                                    placeholder="Write your own feed"
+                                                    {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <div className="flex flex-col justify-center">
+                                    {encoded ? <img src={encoded as string} alt="preview" className="object-contain max-h-[30vh]" />
+                                    : <p>Select an image</p>}
+                                </div>
+                                <div className="flex flex-col w-full justify-center items-center gap-1.5">
+                                    <Label htmlFor="picture">Picture</Label>
+                                    <Input id="picture" type="file" accept="image/*" onChange={handleChange} />
+                                    <Button type="submit" className="py-2 px-1 rounded-md bg-green-300">Save changes</Button>
+                                </div>
+                            </form>
+                        </Form>
                     </div>
                 </DialogContent>
             </Dialog>
