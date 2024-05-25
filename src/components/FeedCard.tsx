@@ -38,6 +38,7 @@ const [typed, setTyped] = useState(false);
 const [fullval, setfullVal] = useState("");
 const [fulltyped, setfullTyped] = useState(false);
 const [image_src, setImageSrc] = useState("");
+const [dialogOpen, setDialogOpen] = useState(false);
 
 const hasTyped = (e: ChangeEvent<HTMLInputElement>) => {
     const typedValue = e.target.value;
@@ -49,6 +50,10 @@ const hasTypedFull = (e: ChangeEvent<HTMLInputElement>) => {
     const typedValue = e.target.value;
     setfullTyped(typedValue.length > 0);
     setfullVal(typedValue);
+}
+
+const handleDialogOpenChange = () => {
+    setDialogOpen((prev) => !prev);
 }
 
 const getPost = async () => {
@@ -82,20 +87,22 @@ useEffect(() => {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    {image_src ? <Image 
-                        src={image_src}
-                        alt="test"
-                        sizes="35vw"
-                        style={{
-                            width: "100%",
-                            height: "auto",
-                        }}
-                        priority={true}
-                        width={2500}
-                        height={1668}
-                    /> : <div>
-                            <Skeleton className="w-[400px] h-[400px] rounded-md" />
-                        </div>}
+                    <button onClick={() => setDialogOpen(true)} className="w-full">
+                        {image_src ? <Image 
+                            src={image_src}
+                            alt="test"
+                            sizes="35vw"
+                            style={{
+                                width: "100%",
+                                height: "auto",
+                            }}
+                            priority={true}
+                            width={2500}
+                            height={1668}
+                        /> : <div>
+                                <Skeleton className="w-[400px] h-[400px] rounded-md" />
+                            </div>}
+                    </button>
                     <div className="flex justify-between -mb-6">
                         <button onClick={() => setClickedLike((prev) => !prev)}>
                             {clickedLike ? <FavoriteBorderIcon fontSize="large" /> : <FavoriteIcon fontSize="large" sx={{ color: red[500]}} />}
@@ -113,7 +120,7 @@ useEffect(() => {
                             </h1>
                         </div>
                         <div className="flex">
-                            <Dialog>
+                            <Dialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
                                 <DialogTrigger asChild>
                                     <button className="text-gray-500">
                                         See more comments
@@ -125,7 +132,7 @@ useEffect(() => {
                                             <div className="flex h-full">
                                                 <div className="flex h-full bg-black items-center w-1/2">
                                                     <Image 
-                                                        src="/test.png"
+                                                        src={image_src}
                                                         alt="test"
                                                         sizes="512px"
                                                         style={{
