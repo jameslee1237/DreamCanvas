@@ -18,6 +18,7 @@ import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
 import Comment from "./Comment";
 import Input from '@mui/material/Input';
+import { EllipsisVerticalIcon } from "lucide-react";
 
 interface PostCardProps {
     postid: string;
@@ -61,6 +62,9 @@ const PostCard = (props: PostCardProps) => {
                             <DialogDescription className="h-full">
                                 <div className="flex h-full">
                                     <div className="flex h-full bg-black items-center w-1/2">
+                                        <button>
+                                            <EllipsisVerticalIcon className="absolute top-2 right-2" />
+                                        </button>
                                         <Image
                                             src={props.postid}
                                             alt="test"
