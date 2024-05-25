@@ -13,6 +13,7 @@ async function uploadFileToS3(file: Buffer, fileName: string): Promise<string> {
         Bucket: process.env.NEXT_PUBLIC_IAM_BUCKET_NAME ?? "",
         Key: fileName,
         Body: file,
+        ContentType: "image/jpeg",
     }
 
     const command = new PutObjectCommand(params);

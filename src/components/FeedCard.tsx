@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
@@ -28,7 +28,6 @@ import {
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
 import Comment from "./Comment";
-  
 
 const FeedCard = () => {
 const [clickedLike, setClickedLike] = useState(true);
@@ -37,6 +36,7 @@ const [val, setVal] = useState("");
 const [typed, setTyped] = useState(false);
 const [fullval, setfullVal] = useState("");
 const [fulltyped, setfullTyped] = useState(false);
+const [image_src, setImageSrc] = useState("");
 
 const hasTyped = (e: ChangeEvent<HTMLInputElement>) => {
     const typedValue = e.target.value;
@@ -49,6 +49,20 @@ const hasTypedFull = (e: ChangeEvent<HTMLInputElement>) => {
     setfullTyped(typedValue.length > 0);
     setfullVal(typedValue);
 }
+
+const getPost = async () => {
+    try {
+        const res = await fetch("/api/post")
+        const data = await res.json();
+        setImageSrc(data.post.image);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+useEffect(() => {
+    getPost();
+}, []);
 
     return (
         <div className="w-[35vw]">
@@ -67,8 +81,8 @@ const hasTypedFull = (e: ChangeEvent<HTMLInputElement>) => {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <Image 
-                        src="/test.png"
+                    {image_src ? <Image 
+                        src={image_src}
                         alt="test"
                         sizes="35vw"
                         style={{
@@ -78,7 +92,7 @@ const hasTypedFull = (e: ChangeEvent<HTMLInputElement>) => {
                         priority={true}
                         width={2500}
                         height={1668}
-                    />
+                    /> : <div>Loading image</div>}
                     <div className="flex justify-between -mb-6">
                         <button onClick={() => setClickedLike((prev) => !prev)}>
                             {clickedLike ? <FavoriteBorderIcon fontSize="large" /> : <FavoriteIcon fontSize="large" sx={{ color: red[500]}} />}
