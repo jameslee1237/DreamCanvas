@@ -17,7 +17,7 @@ model Post {
   id String @id @default(uuid()) @map("_id")
   title String?
   content String
-  image String
+  image String?
   likes Int @default(0)
   authorId String 
   author User @relation(fields: [authorId], references: [id])

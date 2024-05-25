@@ -17,5 +17,6 @@ export async function GET(req: Request, { params }: { params: Params }) {
     }
     catch (error) {
         console.log(error);
+        return NextResponse.json({ error: error instanceof Error ? error.message : String(error) });
     }
 }

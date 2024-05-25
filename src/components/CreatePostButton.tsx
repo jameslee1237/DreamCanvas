@@ -34,8 +34,8 @@ interface CreatePostButtonProps {
 const FormSchema = z.object({
     feed: z
         .string()
-        .min(10, {
-            message: "Feed content must be at least 10 characters.",
+        .min(5, {
+            message: "Feed content must be at least 5 characters.",
         })
         .max(500, {
             message: "Feed content must not be longer than 500 characters.",
@@ -65,9 +65,32 @@ const CreatePostButton = (
         },
     })
 
-    function onSubmit(data: z.infer<typeof FormSchema>) {
-        console.log(data.feed);
+    async function onSubmit(data: z.infer<typeof FormSchema>) {
+        try {
+            if (!img) {
+                return console.error("No image found");
+            }
+            const formData = new FormData();
+            formData.set("file", img);
 
+            const response = await fetch("/api/s3-upload", {
+                method: "POST",
+                body: formData,
+            });
+            if (!response.ok) {
+                throw new Error("Failed to upload image");
+            }
+
+            const result = await response.json();
+            const imageUrl = `https://dreamcanvasbucket.s3.us-east-1.amazonaws.com/${result.fileName}`
+            console.log(imageUrl);
+            setOpen(false);
+            form.reset();
+            setImg(null);
+
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     const handleOpenChange = () => {
