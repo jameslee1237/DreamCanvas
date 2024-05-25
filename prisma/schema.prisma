@@ -15,9 +15,9 @@ datasource db {
 
 model Post {
   id String @id @default(uuid()) @map("_id")
-  title String?
-  content String
-  image String?
+  tags String?
+  feed String
+  image String
   likes Int @default(0)
   authorId String 
   author User @relation(fields: [authorId], references: [id])

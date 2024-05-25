@@ -62,7 +62,7 @@ export default function ExperienceDetailLayout({
                                 </button>
                                 <div className="flex flex-col">
                                     <NotifButton />
-                                    <CreatePostButton userData={userData} />
+                                    <CreatePostButton userId={userData.id} />
                                 </div>
                                 <button onClick={handleprofilebutton} className="py-3 w-[100%] rounded-md hover:bg-slate-500">
                                     <AccountCircleIcon className="mr-2 mb-1"></AccountCircleIcon>

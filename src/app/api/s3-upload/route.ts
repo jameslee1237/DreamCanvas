@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 const s3Client = new S3Client({
-    region: process.env.IAM_BUCKET_REGION ?? "",
+    region: process.env.NEXT_PUBLIC_IAM_BUCKET_REGION ?? "",
     credentials: {
         accessKeyId: process.env.IAM_ACCESS_KEY ?? "",
         secretAccessKey: process.env.IAM_SECRET_ACCESS_KEY ?? "",
@@ -9,10 +9,8 @@ const s3Client = new S3Client({
 });
 
 async function uploadFileToS3(file: Buffer, fileName: string): Promise<string> {
-    console.log(fileName);
-
     const params = {
-        Bucket: process.env.IAM_BUCKET_NAME ?? "",
+        Bucket: process.env.NEXT_PUBLIC_IAM_BUCKET_NAME ?? "",
         Key: fileName,
         Body: file,
     }

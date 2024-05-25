@@ -28,8 +28,11 @@ import { Textarea } from "./ui/textarea";
 import { Button } from "@/components/ui/button";
 
 interface CreatePostButtonProps {
-    userData: object;
+    userId: string;
 }
+
+const bucketName = process.env.NEXT_PUBLIC_IAM_BUCKET_NAME
+const region = process.env.NEXT_PUBLIC_IAM_BUCKET_REGION
 
 const FormSchema = z.object({
     feed: z
@@ -82,8 +85,24 @@ const CreatePostButton = (
             }
 
             const result = await response.json();
-            const imageUrl = `https://dreamcanvasbucket.s3.us-east-1.amazonaws.com/${result.fileName}`
-            console.log(imageUrl);
+            const imageUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${result.fileName}`
+            const postData = {
+                feed: data.feed,
+                url: imageUrl,
+                authorId: props.userId,
+            }
+
+            const postResponse = await fetch("/api/post/new", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(postData),
+            });
+            if (!postResponse.ok) {
+                throw new Error("Failed to create post");
+            }
+
             setOpen(false);
             form.reset();
             setImg(null);
