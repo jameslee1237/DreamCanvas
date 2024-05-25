@@ -1,15 +1,16 @@
 import prisma from "@/lib/client";
 import { NextResponse, NextRequest } from "next/server";
+import { getPost } from "@/app/actions/getPost";
 
-interface Params {
-    postid: string;
-}
-
-export async function GET(req: NextRequest, { params } : { params: Params }) {
+export async function GET(req: NextRequest) {
     try{
+        const posts = await getPost();
+        const getRandompost = (array: any[]) => array[Math.floor(Math.random() * array.length)];
+        const postid = getRandompost(posts).id;
+
         const post = await prisma.post.findFirst({
             where: {
-                id: "2e7471e7-d9f4-4f6a-8d1c-09aa5f16ae01"
+                id: postid
             }
         })
         if (!post) {

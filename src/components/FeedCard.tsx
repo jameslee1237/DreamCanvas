@@ -28,6 +28,7 @@ import {
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
 import Comment from "./Comment";
+import { Skeleton } from "@/components/ui/skeleton"
 
 const FeedCard = () => {
 const [clickedLike, setClickedLike] = useState(true);
@@ -92,7 +93,9 @@ useEffect(() => {
                         priority={true}
                         width={2500}
                         height={1668}
-                    /> : <div>Loading image</div>}
+                    /> : <div>
+                            <Skeleton className="w-[400px] h-[400px] rounded-md" />
+                        </div>}
                     <div className="flex justify-between -mb-6">
                         <button onClick={() => setClickedLike((prev) => !prev)}>
                             {clickedLike ? <FavoriteBorderIcon fontSize="large" /> : <FavoriteIcon fontSize="large" sx={{ color: red[500]}} />}

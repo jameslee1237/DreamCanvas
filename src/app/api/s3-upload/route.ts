@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
+export const dynamic = 'auto';
+
 const s3Client = new S3Client({
     region: process.env.NEXT_PUBLIC_IAM_BUCKET_REGION ?? "",
     credentials: {
@@ -38,9 +41,3 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: error instanceof Error ? error.message : String(error)})
     }
 }
-
-export const config = {
-    api: {
-        bodyParser: false,
-    },
-};

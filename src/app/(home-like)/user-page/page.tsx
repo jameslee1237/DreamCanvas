@@ -2,19 +2,33 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { useUser } from "@clerk/nextjs";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import PostCard from "@/components/PostCard";
-
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function UserPage() {
     const { isLoaded, isSignedIn, user } = useUser();
-    const id = "1"
-
+    const [posts, setPosts] = useState<string[]>([]);
 
     if (!isLoaded || !isSignedIn) {
         return null
     }
+
+
+    useEffect(() => {
+        const fetchPost = async () => {
+            try {
+                const post = await fetch("/api/user");
+                const data = await post.json();
+                setPosts(data.posts);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        fetchPost();
+    }, []);
 
     return (
         <div className="flex ml-6">
@@ -23,7 +37,7 @@ export default function UserPage() {
             </div>
             <div className="flex w-[70vw] flex-col items-center mt-10">
                 <Avatar className="h-36 w-36 mb-4">
-                    <AvatarImage src={user.imageUrl}></AvatarImage> 
+                    <AvatarImage src={user.imageUrl}></AvatarImage>
                     <AvatarFallback>JL</AvatarFallback>
                 </Avatar>
                 <div className="flex">
@@ -53,18 +67,22 @@ export default function UserPage() {
                         Following
                     </h1>
                 </div>
-                <Separator className="bg-black ml-[50px] w-[60vw]"/>
+                <Separator className="bg-black ml-[50px] w-[60vw]" />
                 <div className="flex items-center">
                     <Tabs defaultValue="account" className="">
                         <TabsList className="flex items-center bg-inherit text-black">
                             <TabsTrigger value="account">Posts</TabsTrigger>
                             <TabsTrigger value="password">Saved Posts</TabsTrigger>
                         </TabsList>
-                        <TabsContent value="account" className="text-center">
-                            <PostCard postid="/temp1.png" />
-                        </TabsContent>
-                        <TabsContent value="password" className="text-center">
-                            <PostCard postid="/temp2.png" />
+                        <TabsContent value="account" className="text-center flex">
+                            {posts ? <div className="flex flex-row justify-center gap-4">
+                                        {posts.map((post, index) => (
+                                            <PostCard key={index} postid={post} />
+                                        ))}
+                                     </div> 
+                                    : <div>
+                                        <Skeleton className="w-[300px] h-[200px] rounded-lg" />
+                                     </div>}
                         </TabsContent>
                     </Tabs>
                 </div>
