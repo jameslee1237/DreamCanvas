@@ -169,7 +169,7 @@ const FeedCard = (
                 <CardFooter>
                     <div className="flex flex-col w-full">
                         <div className="flex">
-                            <Comment comment={"First Comment"} authorId={"455966eb-bc0f-4bc2-abac-0f6a55cbac0c"} NoAvatar={true} />
+                            <Comment comment={comments[0]} authorId={authorIds[0]} NoAvatar={true} />
                         </div>
                         <div className="flex">
                             <Dialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>

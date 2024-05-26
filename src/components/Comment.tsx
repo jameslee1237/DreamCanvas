@@ -40,6 +40,12 @@ const Comment = (
             </div>
         )
     }
+
+    if (comment === "") {
+        return (
+            <div></div>
+        )
+    }
     return (
         <div className="flex w-full items-center mt-4">
             <div className="flex">
