@@ -21,6 +21,7 @@ model Post {
   likes Int @default(0)
   authorId String 
   author User @relation(fields: [authorId], references: [id])
+  comments Comment[]
 }
 
 model User {
@@ -37,4 +38,16 @@ model User {
 
   followingIds String[] 
   following    User[]   @relation("UserFollows", fields: [followingIds], references: [id])
+
+  comments Comment[]
+  commentsIds String[]
+}
+
+model Comment {
+  id String @id @default(uuid()) @map("_id")
+  comment String
+  authorId String
+  author User @relation(fields: [authorId], references: [id])
+  postId String
+  post Post @relation(fields: [postId], references: [id])
 }
