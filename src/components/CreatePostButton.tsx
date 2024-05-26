@@ -167,7 +167,9 @@ const CreatePostButton = (
                                 />
                                 <div className="flex flex-col justify-center">
                                     {encoded ? <img src={encoded as string} alt="preview" className="object-contain max-h-[30vh]" />
-                                    : <p>Select an image</p>}
+                                    : <div>
+                                        <p>Select an image</p>
+                                      </div>}
                                 </div>
                                 <div className="flex flex-col w-full justify-center items-center gap-1.5">
                                     <Label htmlFor="picture">Picture</Label>

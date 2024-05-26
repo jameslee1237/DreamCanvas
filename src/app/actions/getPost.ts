@@ -1,5 +1,4 @@
 import prisma from "@/lib/client";
-import { NextResponse, NextRequest } from "next/server";
 import { currentUser } from "@clerk/nextjs";
 
 export const getPost = async () => {

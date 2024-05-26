@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { useState } from "react";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
@@ -11,64 +11,87 @@ import {
     CardContent,
     CardHeader,
     CardFooter,
-  } from "@/components/ui/card";
+} from "@/components/ui/card";
 import {
     Avatar,
     AvatarFallback,
     AvatarImage,
-  } from "@/components/ui/avatar";
+} from "@/components/ui/avatar";
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
     DialogTrigger,
-  } from "@/components/ui/dialog"
+} from "@/components/ui/dialog"
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
 import Comment from "./Comment";
 import { Skeleton } from "@/components/ui/skeleton"
+import { getCurrentUser } from "@/app/actions/getCurrentUser";
+import { feedcardutil } from "@/app/actions/feedcardutil";
 
-const FeedCard = () => {
-const [clickedLike, setClickedLike] = useState(true);
-const [clickedBM, setClickedBM] = useState(true);
-const [val, setVal] = useState("");
-const [typed, setTyped] = useState(false);
-const [fullval, setfullVal] = useState("");
-const [fulltyped, setfullTyped] = useState(false);
-const [image_src, setImageSrc] = useState("");
-const [dialogOpen, setDialogOpen] = useState(false);
-
-const hasTyped = (e: ChangeEvent<HTMLInputElement>) => {
-    const typedValue = e.target.value;
-    setTyped(typedValue.length > 0);
-    setVal(typedValue);
+interface FeedCardProps {
+    image: string;
+    postid: string;
 }
 
-const hasTypedFull = (e: ChangeEvent<HTMLInputElement>) => {
-    const typedValue = e.target.value;
-    setfullTyped(typedValue.length > 0);
-    setfullVal(typedValue);
-}
+const FeedCard = (
+    { image, postid } : FeedCardProps
+) => {
+    const [clickedLike, setClickedLike] = useState(true);
+    const [clickedBM, setClickedBM] = useState(true);
+    const { dialogOpen, val, typed, fullval, fulltyped, 
+            setDialogOpen, setVal, setfullVal,
+            hasTyped, hasTypedFull, handleDialogOpenChange } = feedcardutil();
 
-const handleDialogOpenChange = () => {
-    setDialogOpen((prev) => !prev);
-}
+    const id = getCurrentUser().userData.id;
 
-const getPost = async () => {
-    try {
-        const res = await fetch("/api/post")
-        const data = await res.json();
-        setImageSrc(data.post.image);
-    } catch (error) {
-        console.log(error);
+    const handlefullValComment = async () => {
+        try {
+            const commentData = {
+                comment: fullval,
+                postId: postid,
+                authorId: id,
+            }
+            const res = await fetch("/api/comment/new", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(commentData),
+            });
+            if (!res.ok) {
+                throw new Error("Failed to create comment");
+            }
+            setfullVal("");
+
+        } catch (error) {
+            console.log(error);
+        }
     }
-}
 
-useEffect(() => {
-    getPost();
-}, []);
+    const handleValComment = async () => {
+        try {
+            const commentData = {
+                comment: val,
+                postId: postid,
+                authorId: id,
+            }
+            const res = await fetch("/api/comment/new", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(commentData),
+            });
+            if (!res.ok) {
+                throw new Error("Failed to create comment");
+            }
+            setVal("");
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
         <div className="w-[35vw]">
@@ -88,8 +111,8 @@ useEffect(() => {
                 </CardHeader>
                 <CardContent>
                     <button onClick={() => setDialogOpen(true)} className="w-full">
-                        {image_src ? <Image 
-                            src={image_src}
+                        {image ? <Image
+                            src={image}
                             alt="test"
                             sizes="35vw"
                             style={{
@@ -100,24 +123,22 @@ useEffect(() => {
                             width={2500}
                             height={1668}
                         /> : <div>
-                                <Skeleton className="w-[400px] h-[400px] rounded-md" />
-                            </div>}
+                            <Skeleton className="w-[400px] h-[400px] rounded-md" />
+                        </div>}
                     </button>
                     <div className="flex justify-between -mb-6">
                         <button onClick={() => setClickedLike((prev) => !prev)}>
-                            {clickedLike ? <FavoriteBorderIcon fontSize="large" /> : <FavoriteIcon fontSize="large" sx={{ color: red[500]}} />}
+                            {clickedLike ? <FavoriteBorderIcon fontSize="large" /> : <FavoriteIcon fontSize="large" sx={{ color: red[500] }} />}
                         </button>
                         <button onClick={() => setClickedBM((prev) => !prev)}>
-                            {clickedBM ? <BookmarkBorderIcon fontSize="large"/> : <BookmarkIcon fontSize="large" sx={{ color: grey[700]}} />}
+                            {clickedBM ? <BookmarkBorderIcon fontSize="large" /> : <BookmarkIcon fontSize="large" sx={{ color: grey[700] }} />}
                         </button>
                     </div>
                 </CardContent>
                 <CardFooter>
                     <div className="flex flex-col w-full">
                         <div className="flex">
-                            <h1 className="text-white">
-                                First Comment
-                            </h1>
+                            <Comment comment={"First Comment"} NoAvatar={true} />
                         </div>
                         <div className="flex">
                             <Dialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
@@ -127,77 +148,76 @@ useEffect(() => {
                                     </button>
                                 </DialogTrigger>
                                 <DialogContent>
-                                    <DialogHeader>
-                                        <DialogDescription className="h-full">
-                                            <div className="flex h-full">
-                                                <div className="flex h-full bg-black items-center w-1/2">
-                                                    <Image 
-                                                        src={image_src}
-                                                        alt="test"
-                                                        sizes="512px"
-                                                        style={{
-                                                            width: "100%",
-                                                            height: "auto",
-                                                        }}
-                                                        priority={true}
-                                                        width={2500}
-                                                        height={1668}
-                                                    />
+                                    <div className="flex h-full">
+                                        <div className="flex h-full bg-black items-center w-1/2">
+                                            {image ? <Image
+                                                src={image}
+                                                alt="test"
+                                                sizes="512px"
+                                                style={{
+                                                    width: "100%",
+                                                    height: "auto",
+                                                }}
+                                                priority={true}
+                                                width={2500}
+                                                height={1668}
+                                            /> : <div>
+                                                    <Skeleton className="w-[512px] h-[400px] rounded-md" />
                                                 </div>
-                                                <div className="flex flex-col w-1/2 max-h-full">
-                                                    <div className="flex ml-4 mt-4 mb-4">
-                                                        <Avatar className="hidden h-9 w-9 sm:flex">
-                                                            <AvatarImage src="" alt="Avatar" />
-                                                            <AvatarFallback className="bg-green-200">OM</AvatarFallback>
-                                                        </Avatar>
-                                                        <div className="grid gap-1">
-                                                            <h1 className="text-[16px] ml-2 font-bold text-black text-muted-foreground mt-1">
-                                                                o_martin_0987
-                                                            </h1>
-                                                        </div>
-                                                    </div>
-                                                    <Separator />
-                                                    <div className="flex w-full h-[75%] max-h-full">
-                                                        <ScrollArea className="w-full mt-4 mb-4 max-h-[75vh] overflow-hidden">
-                                                            <Comment comment="Comment1" />
-                                                            <Separator className="mt-4" />
-                                                            <Comment comment="Comment2" />
-                                                            <Separator className="mt-4" />
-                                                            <Comment comment="Comment3" />
-                                                            <Separator className="mt-4" />
-                                                            <Comment comment="Comment4" />
-                                                            <Separator className="mt-4" />
-                                                            <Comment comment="Comment5" />
-                                                            <Separator className="mt-4" />
-                                                            <Comment comment="Comment6" />
-                                                            <Separator className="mt-4" />
-                                                            <Comment comment="Comment7" />
-                                                            <Separator className="mt-4" />
-                                                            <Comment comment="Comment8" />
-                                                            <Separator className="mt-4" />
-                                                            <Comment comment="Comment9" /> 
-                                                        </ScrollArea>
-                                                    </div>
-                                                    <Separator />
-                                                    <div className="flex mt-4 mx-4">
-                                                        <Input fullWidth={true} value={fullval} placeholder="Add a comment..." onChange={hasTypedFull} />
-                                                            {fulltyped && (
-                                                                <button className="bg-green-400 hover:bg-green-700 rounded-md px-2 py-1 ml-4">
-                                                                    Post
-                                                                </button>
-                                                            )}
-                                                    </div>
+                                            }
+                                        </div>
+                                        <div className="flex flex-col w-1/2 max-h-full">
+                                            <div className="flex ml-4 mt-4 mb-4">
+                                                <Avatar className="hidden h-9 w-9 sm:flex">
+                                                    <AvatarImage src="" alt="Avatar" />
+                                                    <AvatarFallback className="bg-green-200">OM</AvatarFallback>
+                                                </Avatar>
+                                                <div className="grid gap-1">
+                                                    <h1 className="text-[16px] ml-2 font-bold text-black text-muted-foreground mt-1">
+                                                        o_martin_0987
+                                                    </h1>
                                                 </div>
                                             </div>
-                                        </DialogDescription>
-                                    </DialogHeader>
+                                            <Separator />
+                                            <div className="flex w-full h-[75%] max-h-full">
+                                                <ScrollArea className="w-full mt-4 mb-4 max-h-[75vh] overflow-hidden">
+                                                    <Comment comment={"Comment1"} />
+                                                    <Separator className="mt-4" />
+                                                    <Comment comment={"Comment2"} />
+                                                    <Separator className="mt-4" />
+                                                    <Comment comment={"Comment3"} />
+                                                    <Separator className="mt-4" />
+                                                    <Comment comment={"Comment4"} />
+                                                    <Separator className="mt-4" />
+                                                    <Comment comment={"Comment5"} />
+                                                    <Separator className="mt-4" />
+                                                    <Comment comment={"Comment6"} />
+                                                    <Separator className="mt-4" />
+                                                    <Comment comment={"Comment7"} />
+                                                    <Separator className="mt-4" />
+                                                    <Comment comment={"Comment8"} />
+                                                    <Separator className="mt-4" />
+                                                    <Comment comment={"Comment9"} />
+                                                </ScrollArea>
+                                            </div>
+                                            <Separator />
+                                            <div className="flex mt-4 mx-4">
+                                                <Input fullWidth={true} value={fullval} placeholder="Add a comment..." onChange={hasTypedFull} />
+                                                {fulltyped && (
+                                                    <button onClick={handlefullValComment} className="bg-green-400 hover:bg-green-700 rounded-md px-2 py-1 ml-4">
+                                                        Post
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </DialogContent>
                             </Dialog>
                         </div>
                         <div className="flex w-full">
-                            <Input fullWidth={true} placeholder="Add a comment" value={val} onChange={hasTyped} sx={{ input: { color: "white "}}} />
+                            <Input fullWidth={true} placeholder="Add a comment" value={val} onChange={hasTyped} sx={{ input: { color: "white " } }} />
                             {typed && (
-                                <button className="bg-green-400 hover:bg-green-700 rounded-md px-2 py-1 ml-4">
+                                <button onClick={handleValComment} className="bg-green-400 hover:bg-green-700 rounded-md px-2 py-1 ml-4">
                                     Post
                                 </button>
                             )}
