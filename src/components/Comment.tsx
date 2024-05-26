@@ -30,7 +30,6 @@ const Comment = (
 
     useEffect(() => {
         getUserId(authorId);
-        console.log(profileImage);
     }, [authorId]);
 
     if (username === "") {

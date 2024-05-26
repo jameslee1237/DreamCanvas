@@ -17,11 +17,11 @@ export async function GET(req: NextRequest) {
         else {
             const posts = await getPost();
             const arr = posts.map((item) => item.image);
-
+            const arr2 = posts.map((item) => item.id);
             if (!arr) {
                 throw new Error("Posts not found");
             }
-            return NextResponse.json({ success: true, posts: arr });
+            return NextResponse.json({ success: true, posts: arr, postIds: arr2});
         }
     }
     catch (error) {

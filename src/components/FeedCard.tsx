@@ -99,7 +99,6 @@ const FeedCard = (
 
     const getComments = async (p_id: string) => {
         try {
-            console.log(p_id);
             const res = await fetch(`/api/comment?postId=${p_id}`);
             if (!res.ok) {
                 throw new Error("Failed to fetch comments");

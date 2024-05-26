@@ -6,10 +6,12 @@ import React, { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import PostCard from "@/components/PostCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { set } from "react-hook-form";
 
 export default function UserPage() {
     const { isLoaded, isSignedIn, user } = useUser();
-    const [posts, setPosts] = useState<string[]>([]);
+    const [images, setImages] = useState<string[]>([]);
+    const [postids, setPostIds] = useState<string[]>([]);
 
     if (!isLoaded || !isSignedIn) {
         return null
@@ -21,7 +23,8 @@ export default function UserPage() {
             try {
                 const post = await fetch("/api/user");
                 const data = await post.json();
-                setPosts(data.posts);
+                setImages(data.posts);
+                setPostIds(data.postIds);
             } catch (error) {
                 console.log(error);
             }
@@ -75,9 +78,9 @@ export default function UserPage() {
                             <TabsTrigger value="password">Saved Posts</TabsTrigger>
                         </TabsList>
                         <TabsContent value="account" className="text-center flex">
-                            {posts ? <div className="flex flex-row justify-center gap-4">
-                                        {posts.map((post, index) => (
-                                            <PostCard key={index} postid={post} />
+                            {images ? <div className="flex flex-row justify-center gap-4">
+                                        {images.map((image, index) => (
+                                            <PostCard key={image} image={image} postid={postids[index]} />
                                         ))}
                                      </div> 
                                     : <div>

@@ -1,5 +1,4 @@
 import Image from "next/image";
-import React from "react";
 import {
     Avatar,
     AvatarFallback,
@@ -8,23 +7,26 @@ import {
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { useState, ChangeEvent } from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
 import Comment from "./Comment";
 import Input from '@mui/material/Input';
 import { EllipsisVerticalIcon } from "lucide-react";
+import { getCurrentUser } from "@/app/actions/getCurrentUser";
+import { Skeleton } from "./ui/skeleton";
 
 interface PostCardProps {
+    image: string;
     postid: string;
 }
 
-const PostCard = (props: PostCardProps) => {
+const PostCard = ({ image, postid }: PostCardProps) => {
+    const id = getCurrentUser().userData.id;
+    const [comments, setComments] = useState<string[] | null>(null);
+    const [authorIds, setAuthorIds] = useState<string[] | null>(null);
     const [fullval, setfullVal] = useState("");
     const [fulltyped, setfullTyped] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -37,7 +39,62 @@ const PostCard = (props: PostCardProps) => {
     }
 
     const handleDialogOpenChange = () => {
+        if (dialogOpen) {
+            setfullVal("");
+            setfullTyped(false);
+        }
         setDialogOpen((prev) => !prev);
+    }
+    const handlefullValComment = async () => {
+        try {
+            const commentData = {
+                comment: fullval,
+                postId: postid,
+                authorId: id,
+            }
+            const res = await fetch("/api/comment/new", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(commentData),
+            });
+            if (!res.ok) {
+                throw new Error("Failed to create comment");
+            }
+            setfullVal("");
+
+            await getComments(postid);
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const getComments = async (p_id: string) => {
+        try {
+            const res = await fetch(`/api/comment?postId=${p_id}`);
+            if (!res.ok) {
+                throw new Error("Failed to fetch comments");
+            }
+            const data = await res.json();
+            setComments(data.comments.map((comment: any) => comment.comment));
+            setAuthorIds(data.comments.map((comment: any) => comment.authorId));
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        getComments(postid);
+    }, [postid]);
+
+    if (comments === null || authorIds === null) {
+        return (
+            <div>
+                <Skeleton className="w-[400px] h-[300px] rounded-md" />
+            </div>
+        )
     }
 
     return (
@@ -45,11 +102,12 @@ const PostCard = (props: PostCardProps) => {
             <button onClick={() => setDialogOpen(true)} className="w-full">
                 <div className="w-full h-full overflow-hidden">
                     <Image
-                        src={props.postid}
+                        src={image}
                         alt="image"
                         sizes="20vw"
                         width={300}
                         height={200}
+                        priority={true}
                     />
                 </div>
             </button>
@@ -64,7 +122,7 @@ const PostCard = (props: PostCardProps) => {
                                     <EllipsisVerticalIcon className="absolute top-2 right-2" />
                                 </button>
                                 <Image
-                                    src={props.postid}
+                                    src={image}
                                     alt="test"
                                     sizes="512px"
                                     style={{
@@ -91,30 +149,21 @@ const PostCard = (props: PostCardProps) => {
                                 <Separator />
                                 <div className="flex w-full h-[75%] max-h-full">
                                     <ScrollArea className="w-full mt-4 mb-4 max-h-[75vh] overflow-hidden">
-                                        <Comment comment={"Comment1"} />
-                                        <Separator className="mt-4" />
-                                        <Comment comment={"Comment2"} />
-                                        <Separator className="mt-4" />
-                                        <Comment comment={"Comment3"} />
-                                        <Separator className="mt-4" />
-                                        <Comment comment={"Comment4"} />
-                                        <Separator className="mt-4" />
-                                        <Comment comment={"Comment5"} />
-                                        <Separator className="mt-4" />
-                                        <Comment comment={"Comment6"} />
-                                        <Separator className="mt-4" />
-                                        <Comment comment={"Comment7"} />
-                                        <Separator className="mt-4" />
-                                        <Comment comment={"Comment8"} />
-                                        <Separator className="mt-4" />
-                                        <Comment comment={"Comment9"} />
+                                        {comments.map((commentf, index) => (
+                                            <div key={index}>
+                                                <Comment
+                                                    comment={commentf}
+                                                    authorId={authorIds[index]} />
+                                                <Separator className="mt-4" />
+                                            </div>
+                                        ))}
                                     </ScrollArea>
                                 </div>
                                 <Separator />
                                 <div className="flex mt-4 mx-4">
                                     <Input fullWidth={true} value={fullval} placeholder="Add a comment..." onChange={hasTypedFull} />
                                     {fulltyped && (
-                                        <button className="bg-green-400 hover:bg-green-700 rounded-md px-2 py-1 ml-4">
+                                        <button onClick={handlefullValComment} className="bg-green-400 hover:bg-green-700 rounded-md px-2 py-1 ml-4">
                                             Post
                                         </button>
                                     )}
