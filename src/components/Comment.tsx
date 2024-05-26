@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Skeleton } from "./ui/skeleton";
 
 interface CommentProps {
     comment: string;
@@ -11,7 +12,7 @@ const Comment = (
     { comment, authorId, NoAvatar }: CommentProps 
 ) => {
     const [username, setUsername] = useState(""); 
-
+    const [profileImage, setProfileImage] = useState("");
     const getUserId = async (authorId: string) => {
         try {
             const res = await fetch(`/api/user?authorId=${authorId}`);
@@ -19,7 +20,9 @@ const Comment = (
                 throw new Error("Failed to fetch user");
             }
             const data = await res.json();
-            setUsername(data.user.username);
+            console.log(data);
+            setUsername(data.user.userName);
+            setProfileImage(data.user.profileImage);
         } catch (error) {
             console.log(error);
         }
@@ -27,14 +30,22 @@ const Comment = (
 
     useEffect(() => {
         getUserId(authorId);
+        console.log(profileImage);
     }, [authorId]);
 
+    if (username === "") {
+        return (
+            <div>
+                <Skeleton className="w-[90%] h-[50px]" />
+            </div>
+        )
+    }
     return (
         <div className="flex w-full items-center mt-4">
             <div className="flex">
                 {!NoAvatar && <Avatar className="hidden h-9 w-9 ml-4 sm:flex">
-                    <AvatarImage src="" alt="Avatar" />
-                    <AvatarFallback className="bg-green-200">PL</AvatarFallback>
+                    <AvatarImage src={profileImage} alt="Avatar" />
+                    <AvatarFallback className="bg-green-200">{username[0] + username[1]}</AvatarFallback>
                 </Avatar>}
                 {!NoAvatar ?
                     <div className="grid gap-1">

@@ -66,6 +66,8 @@ const FeedCard = (
             }
             setfullVal("");
 
+            await getComments(postid);
+
         } catch (error) {
             console.log(error);
         }
@@ -97,6 +99,7 @@ const FeedCard = (
 
     const getComments = async (p_id: string) => {
         try {
+            console.log(p_id);
             const res = await fetch(`/api/comment?postId=${p_id}`);
             if (!res.ok) {
                 throw new Error("Failed to fetch comments");
@@ -208,14 +211,14 @@ const FeedCard = (
                                             </div>
                                             <Separator />
                                             <div className="flex w-full h-[75%] max-h-full">
-                                                <ScrollArea className="w-full mt-4 mb-4 max-h-[75vh] overflow-hidden">
-                                                    {comments.map((comment, index) => (
-                                                        <React.Fragment key={index}>
-                                                            <Comment 
-                                                                comment={comment}
+                                                <ScrollArea className="w-full mb-4 max-h-[75vh] overflow-hidden">
+                                                    {comments.map((commentf, index) => (
+                                                        <div key={index}>
+                                                            <Comment
+                                                                comment={commentf}  
                                                                 authorId={authorIds[index]} />
                                                             <Separator className="mt-4" />
-                                                        </React.Fragment>
+                                                        </div>
                                                     ))}
                                                 </ScrollArea>
                                             </div>

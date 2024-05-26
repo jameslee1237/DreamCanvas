@@ -52,7 +52,8 @@ export async function POST (req: Request) {
                 firstName: payload.data.first_name,
                 lastName: payload.data.last_name,
                 email: payload.data.email_addresses[0].email_address,
-                userName: payload.data.username
+                userName: payload.data.username,
+                profileImage: payload.data.image_url
             }
         })
     }
@@ -67,7 +68,8 @@ export async function POST (req: Request) {
                     firstName: payload.data.first_name,
                     lastName: payload.data.last_name,
                     email: payload.data.email_addresses[0].email_address,
-                    userName: payload.data.username
+                    userName: payload.data.username,
+                    profileImage: payload.data.image_url
                 }
             })
         }
@@ -79,7 +81,8 @@ export async function POST (req: Request) {
                         firstName: payload.data.first_name,
                         lastName: payload.data.last_name,
                         email: payload.data.email_addresses[0].email_address,
-                        userName: payload.data.username
+                        userName: payload.data.username,
+                        profileImage: payload.data.image_url
                     }
                 })
             }

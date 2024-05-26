@@ -20,6 +20,10 @@ export const feedcardutil = () => {
     }
 
     const handleDialogOpenChange = () => {
+        if (dialogOpen) {
+            setfullVal("");
+            setfullTyped(false);
+        }
         setDialogOpen((prev) => !prev);
     }
 

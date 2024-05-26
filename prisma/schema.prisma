@@ -32,6 +32,7 @@ model User {
   userName String
   email String 
   posts Post[]
+  profileImage String?
 
   followedByIds String[]
   followedBy    User[]   @relation("UserFollows", fields: [followedByIds], references: [id])
