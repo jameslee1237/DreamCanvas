@@ -6,7 +6,6 @@ import React, { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import PostCard from "@/components/PostCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { set } from "react-hook-form";
 
 export default function UserPage() {
     const { isLoaded, isSignedIn, user } = useUser();
@@ -50,7 +49,7 @@ export default function UserPage() {
                 </div>
                 <div className="flex justify-between w-[13vw] mt-4 font-semibold">
                     <h1>
-                        10
+                        {images.length}
                     </h1>
                     <h1>
                         10

@@ -92,7 +92,7 @@ const PostCard = ({ image, postid }: PostCardProps) => {
     if (comments === null || authorIds === null) {
         return (
             <div>
-                <Skeleton className="w-[400px] h-[300px] rounded-md" />
+                <Skeleton className="w-[300px] h-[200px] rounded-md" />
             </div>
         )
     }
