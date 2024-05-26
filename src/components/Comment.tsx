@@ -1,14 +1,34 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 interface CommentProps {
     comment: string;
+    authorId: string;
     NoAvatar?: boolean;
 }
 
 const Comment = (
-    { comment, NoAvatar }: CommentProps 
+    { comment, authorId, NoAvatar }: CommentProps 
 ) => {
+    const [username, setUsername] = useState(""); 
+
+    const getUserId = async (authorId: string) => {
+        try {
+            const res = await fetch(`/api/user?authorId=${authorId}`);
+            if (!res.ok) {
+                throw new Error("Failed to fetch user");
+            }
+            const data = await res.json();
+            setUsername(data.user.username);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        getUserId(authorId);
+    }, [authorId]);
+
     return (
         <div className="flex w-full items-center mt-4">
             <div className="flex">
@@ -19,13 +39,13 @@ const Comment = (
                 {!NoAvatar ?
                     <div className="grid gap-1">
                         <h1 className="text-[16px] ml-2 font-bold text-black text-muted-foreground mt-2">
-                            p_loy9
+                            {username}
                         </h1>
                     </div>
                     :
                     <div className="flex">
                         <h1 className="text-[16px] font-bold text-black text-muted-foreground">
-                            p_loy9
+                            {username}
                         </h1>
                     </div>}
             </div>

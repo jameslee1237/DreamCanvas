@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dialog"
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
-import Comment from "./Comment";
+import Comment from "@/components/Comment";
 import { Skeleton } from "@/components/ui/skeleton"
 import { getCurrentUser } from "@/app/actions/getCurrentUser";
 import { feedcardutil } from "@/app/actions/feedcardutil";
@@ -39,6 +39,8 @@ const FeedCard = (
 ) => {
     const [clickedLike, setClickedLike] = useState(true);
     const [clickedBM, setClickedBM] = useState(true);
+    const [comments, setComments] = useState<string[] | null>(null);
+    const [authorIds, setAuthorIds] = useState<string[] | null>(null);
     const { dialogOpen, val, typed, fullval, fulltyped, 
             setDialogOpen, setVal, setfullVal,
             hasTyped, hasTypedFull, handleDialogOpenChange } = feedcardutil();
@@ -93,6 +95,32 @@ const FeedCard = (
         }
     }
 
+    const getComments = async (p_id: string) => {
+        try {
+            const res = await fetch(`/api/comment?postId=${p_id}`);
+            if (!res.ok) {
+                throw new Error("Failed to fetch comments");
+            }
+            const data = await res.json();
+            setComments(data.comments.map((comment: any) => comment.comment));
+            setAuthorIds(data.comments.map((comment: any) => comment.authorId));
+        } catch (error) {
+            console.log(error);
+        }
+    } 
+
+    useEffect(() => {
+        getComments(postid);
+    }, [postid]);
+
+    if (comments === null || authorIds === null) {
+        return (
+            <div>
+                <Skeleton className="w-[400px] h-[300px] rounded-md" />
+            </div>
+        )
+    }
+
     return (
         <div className="w-[35vw]">
             <Card className="w-full h-full bg-[#3c023e] border-0 flex flex-col">
@@ -138,7 +166,7 @@ const FeedCard = (
                 <CardFooter>
                     <div className="flex flex-col w-full">
                         <div className="flex">
-                            <Comment comment={"First Comment"} NoAvatar={true} />
+                            <Comment comment={"First Comment"} authorId={"455966eb-bc0f-4bc2-abac-0f6a55cbac0c"} NoAvatar={true} />
                         </div>
                         <div className="flex">
                             <Dialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
@@ -181,23 +209,14 @@ const FeedCard = (
                                             <Separator />
                                             <div className="flex w-full h-[75%] max-h-full">
                                                 <ScrollArea className="w-full mt-4 mb-4 max-h-[75vh] overflow-hidden">
-                                                    <Comment comment={"Comment1"} />
-                                                    <Separator className="mt-4" />
-                                                    <Comment comment={"Comment2"} />
-                                                    <Separator className="mt-4" />
-                                                    <Comment comment={"Comment3"} />
-                                                    <Separator className="mt-4" />
-                                                    <Comment comment={"Comment4"} />
-                                                    <Separator className="mt-4" />
-                                                    <Comment comment={"Comment5"} />
-                                                    <Separator className="mt-4" />
-                                                    <Comment comment={"Comment6"} />
-                                                    <Separator className="mt-4" />
-                                                    <Comment comment={"Comment7"} />
-                                                    <Separator className="mt-4" />
-                                                    <Comment comment={"Comment8"} />
-                                                    <Separator className="mt-4" />
-                                                    <Comment comment={"Comment9"} />
+                                                    {comments.map((comment, index) => (
+                                                        <React.Fragment key={index}>
+                                                            <Comment 
+                                                                comment={comment}
+                                                                authorId={authorIds[index]} />
+                                                            <Separator className="mt-4" />
+                                                        </React.Fragment>
+                                                    ))}
                                                 </ScrollArea>
                                             </div>
                                             <Separator />

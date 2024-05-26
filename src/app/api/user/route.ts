@@ -1,15 +1,28 @@
 import { getPost } from "@/app/actions/getPost";
 import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/client";
 
 export async function GET(req: NextRequest) {
     try {
-        const posts = await getPost();
-        const arr = posts.map((item) => item.image);
-
-        if (!arr) {
-            throw new Error("Posts not found");
+        const { searchParams } = new URL(req.url);
+        const authorId = searchParams.get("authorId");
+        if (authorId) {
+            const user = await prisma.user.findUnique({
+                where: {
+                    id: authorId
+                }
+            });
+            return NextResponse.json({ success: true, user });
         }
-        return NextResponse.json({ success: true, posts: arr });
+        else {
+            const posts = await getPost();
+            const arr = posts.map((item) => item.image);
+
+            if (!arr) {
+                throw new Error("Posts not found");
+            }
+            return NextResponse.json({ success: true, posts: arr });
+        }
     }
     catch (error) {
         return NextResponse.json({ error: error instanceof Error ? error.message : String(error) });

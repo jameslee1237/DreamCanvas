@@ -75,6 +75,8 @@ export default function Home() {
     }
 
     const randomItem = extractData[Math.floor(Math.random() * extractData.length)];
+    const randomItem2 = extractData[Math.floor(Math.random() * extractData.length)];
+    const randomItem3 = extractData[Math.floor(Math.random() * extractData.length)];
 
     return (
         <div className="flex w-[80vw] text-white">
@@ -99,6 +101,8 @@ export default function Home() {
                 </div>
                 <div className="flex flex-col items-center">
                     <FeedCard image={randomItem.image} postid={randomItem.id} />
+                    <FeedCard image={randomItem2.image} postid={randomItem2.id} />
+                    <FeedCard image={randomItem3.image} postid={randomItem3.id} />
                 </div>
             </div>
             <div className="flex w-[30vw]">
