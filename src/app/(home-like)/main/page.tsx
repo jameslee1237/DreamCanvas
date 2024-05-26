@@ -101,7 +101,7 @@ export default function Home() {
                 </div>
                 <div className="flex flex-col items-center">
                     <FeedCard image={randomItem.image} postid={randomItem.id} />
-                </div>
+                </div> 
             </div>
             <div className="flex w-[30vw]">
                 <div className="flex flex-col">
