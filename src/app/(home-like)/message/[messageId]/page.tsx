@@ -51,7 +51,7 @@ export default function MessagePage({
             </div>
             <div className="flex flex-col-reverse space-y-3 space-y-reverse w-full h-[75vh] bg-blue-100">
                 {getConvo(messageId).map((msg: string, index: number) => (
-                    <div 
+                    <div key={msg}
                         className={`flex max-w-[60%] w-fit px-4 py-3 mb-3
                                     justify-${index %2 === 0 ? "start" : "end"} 
                                   ${index % 2 === 0 ? "bg-green-300 rounded-l-md ml-auto" : "bg-gray-500 rounded-r-md"}

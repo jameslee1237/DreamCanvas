@@ -25,6 +25,8 @@ interface PostCardProps {
 
 const PostCard = ({ image, postid }: PostCardProps) => {
     const id = getCurrentUser().userData.id;
+    const userName = getCurrentUser().userData.userName;
+    const profile = getCurrentUser().userData.profileImage;
     const [comments, setComments] = useState<string[] | null>(null);
     const [authorIds, setAuthorIds] = useState<string[] | null>(null);
     const [fullval, setfullVal] = useState("");
@@ -137,12 +139,12 @@ const PostCard = ({ image, postid }: PostCardProps) => {
                             <div className="flex flex-col w-1/2 max-h-full">
                                 <div className="flex ml-4 mt-4 mb-4">
                                     <Avatar className="hidden h-9 w-9 sm:flex">
-                                        <AvatarImage src="" alt="Avatar" />
+                                        <AvatarImage src={profile} alt="Avatar" />
                                         <AvatarFallback className="bg-green-200">OM</AvatarFallback>
                                     </Avatar>
                                     <div className="grid gap-1">
                                         <h1 className="text-[16px] ml-2 font-bold text-black text-muted-foreground mt-1">
-                                            o_martin_0987
+                                            {userName}
                                         </h1>
                                     </div>
                                 </div>

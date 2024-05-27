@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
@@ -24,9 +24,9 @@ import {
 } from "@/components/ui/dialog"
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
+import { getCurrentUser } from "@/app/actions/getCurrentUser";
 import Comment from "@/components/Comment";
 import { Skeleton } from "@/components/ui/skeleton"
-import { getCurrentUser } from "@/app/actions/getCurrentUser";
 import { feedcardutil } from "@/app/actions/feedcardutil";
 
 interface FeedCardProps {
@@ -41,11 +41,35 @@ const FeedCard = (
     const [clickedBM, setClickedBM] = useState(true);
     const [comments, setComments] = useState<string[] | null>(null);
     const [authorIds, setAuthorIds] = useState<string[] | null>(null);
+    const [p_authorId, setP_authorId] = useState<string | null>(null);
+    const [userName, setUserName] = useState<string | null>(null);
+    const [profileImage, setProfileImage] = useState<string | undefined>(undefined);
+    const effectRan = useRef(false);
+
     const { dialogOpen, val, typed, fullval, fulltyped, 
             setDialogOpen, setVal, setfullVal,
             hasTyped, hasTypedFull, handleDialogOpenChange } = feedcardutil();
-
     const id = getCurrentUser().userData.id;
+
+    const getAuthorId = async (post_id: string) => {
+        try {
+            const res = await fetch(`/api/post?post_id=${post_id}`);
+            if (!res.ok) {
+                throw new Error("Failed to fetch post");
+            }
+            const data = await res.json();
+            const p_authorId = data.post.authorId;
+            const res_user = await fetch(`/api/user?authorId=${p_authorId}`);
+            if (!res_user.ok) {
+                throw new Error("Failed to fetch user");
+            }
+            const data_user = await res_user.json();
+            return data_user;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
 
     const handlefullValComment = async () => {
         try {
@@ -104,24 +128,28 @@ const FeedCard = (
                 throw new Error("Failed to fetch comments");
             }
             const data = await res.json();
-            setComments(data.comments.map((comment: any) => comment.comment));
-            setAuthorIds(data.comments.map((comment: any) => comment.authorId));
+            return data;
         } catch (error) {
             console.log(error);
         }
     } 
 
     useEffect(() => {
-        getComments(postid);
-    }, [postid]);
+        if (effectRan.current) return;
 
-    if (comments === null || authorIds === null) {
-        return (
-            <div>
-                <Skeleton className="w-[400px] h-[300px] rounded-md" />
-            </div>
-        )
-    }
+        const fetchData = async () => {
+            const data = await getAuthorId(postid);
+            const data2 = await getComments(postid);
+            setUserName(data.user.userName);
+            setProfileImage(data.user.profileImage);
+            setComments(data2.comments.map((comment: any) => comment.comment));
+            setAuthorIds(data2.comments.map((comment: any) => comment.authorId));
+        }
+        if (postid) {
+            fetchData();
+            effectRan.current = true;
+        }
+    }, [postid]);
 
     return (
         <div className="w-[35vw]">
@@ -129,12 +157,12 @@ const FeedCard = (
                 <CardHeader>
                     <div className="flex gap-4">
                         <Avatar className="hidden h-9 w-9 sm:flex">
-                            <AvatarImage src="" alt="Avatar" />
+                            <AvatarImage src={profileImage} alt="Avatar" />
                             <AvatarFallback>OM</AvatarFallback>
                         </Avatar>
                         <div className="grid gap-1">
                             <h1 className="text-md text-white text-muted-foreground mt-1">
-                                o_martin_0987
+                                {userName}
                             </h1>
                         </div>
                     </div>
@@ -168,7 +196,7 @@ const FeedCard = (
                 <CardFooter>
                     <div className="flex flex-col w-full">
                         <div className="flex">
-                            <Comment comment={comments[0]} authorId={authorIds[0]} NoAvatar={true} />
+                            {comments && authorIds && <Comment comment={comments[0]} authorId={authorIds[0]} NoAvatar={true} /> }
                         </div>
                         <div className="flex">
                             <Dialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
@@ -199,19 +227,19 @@ const FeedCard = (
                                         <div className="flex flex-col w-1/2 max-h-full">
                                             <div className="flex ml-4 mt-4 mb-4">
                                                 <Avatar className="hidden h-9 w-9 sm:flex">
-                                                    <AvatarImage src="" alt="Avatar" />
+                                                    <AvatarImage src={profileImage} alt="Avatar" />
                                                     <AvatarFallback className="bg-green-200">OM</AvatarFallback>
                                                 </Avatar>
                                                 <div className="grid gap-1">
                                                     <h1 className="text-[16px] ml-2 font-bold text-black text-muted-foreground mt-1">
-                                                        o_martin_0987
+                                                        {userName}
                                                     </h1>
                                                 </div>
                                             </div>
                                             <Separator />
                                             <div className="flex w-full h-[75%] max-h-full">
                                                 <ScrollArea className="w-full mb-4 max-h-[75vh] overflow-hidden">
-                                                    {comments.map((commentf, index) => (
+                                                    {comments && authorIds && comments.map((commentf, index) => (
                                                         <div key={index}>
                                                             <Comment
                                                                 comment={commentf}  

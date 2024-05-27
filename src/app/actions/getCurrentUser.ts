@@ -11,7 +11,8 @@ export const getCurrentUser = () => {
         userName: "",
         email: "",
         followedByIds: [],
-        followingIds: []
+        followingIds: [],
+        profileImage: ""
     });
     const [ loading, setLoading ] = useState(true);
 

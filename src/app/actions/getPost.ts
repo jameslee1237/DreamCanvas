@@ -7,17 +7,10 @@ export const getPost = async () => {
         throw new Error("User not found");
     }
 
-    const currentPrisma = await prisma.user.findUnique({
-        where: {
-            clerkId: currentClerk.id
-        },
-        include: {
-            posts: true
-        }
-    })
+    const currentPrisma = await prisma.post.findMany();
 
     if (currentPrisma === null) {
         throw new Error("User not found");
     }
-    return currentPrisma.posts;
+    return currentPrisma;
 }

@@ -33,11 +33,11 @@ export default function UserPage() {
     }, []);
 
     return (
-        <div className="flex ml-6">
+        <div className="flex ml-6 w-[75vw]">
             <div className="flex">
                 <Separator orientation="vertical" className="bg-black" />
             </div>
-            <div className="flex w-[70vw] flex-col items-center mt-10">
+            <div className="flex w-full flex-col items-center mt-10">
                 <Avatar className="h-36 w-36 mb-4">
                     <AvatarImage src={user.imageUrl}></AvatarImage>
                     <AvatarFallback>JL</AvatarFallback>
@@ -69,22 +69,25 @@ export default function UserPage() {
                         Following
                     </h1>
                 </div>
-                <Separator className="bg-black ml-[50px] w-[60vw]" />
-                <div className="flex items-center">
-                    <Tabs defaultValue="account" className="">
+                <Separator className="bg-black ml-[30px] w-[60vw]" />
+                <div className="flex items-center w-full justify-center">
+                    <Tabs defaultValue="account" className="max-w-[70vw] mt-4 ml-10">
                         <TabsList className="flex items-center bg-inherit text-black">
                             <TabsTrigger value="account">Posts</TabsTrigger>
                             <TabsTrigger value="password">Saved Posts</TabsTrigger>
                         </TabsList>
                         <TabsContent value="account" className="text-center flex">
-                            {images ? <div className="flex flex-row justify-center gap-4">
+                            <div className="flex flex-col max-w-full justify-center">
+                                {images ?
+                                    <div className="flex flex-wrap justify-start gap-4 ml-[60px]">
                                         {images.map((image, index) => (
                                             <PostCard key={image} image={image} postid={postids[index]} />
                                         ))}
-                                     </div> 
+                                    </div>
                                     : <div>
                                         <Skeleton className="w-[300px] h-[200px] rounded-lg" />
-                                     </div>}
+                                    </div>}
+                            </div>
                         </TabsContent>
                     </Tabs>
                 </div>

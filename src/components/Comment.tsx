@@ -11,8 +11,8 @@ interface CommentProps {
 const Comment = (
     { comment, authorId, NoAvatar }: CommentProps 
 ) => {
-    const [username, setUsername] = useState(""); 
-    const [profileImage, setProfileImage] = useState("");
+    const [username, setUsername] = useState<string | undefined>(""); 
+    const [profileImage, setProfileImage] = useState<string | undefined>("");
     const getUserId = async (authorId: string) => {
         try {
             const res = await fetch(`/api/user?authorId=${authorId}`);
@@ -20,16 +20,21 @@ const Comment = (
                 throw new Error("Failed to fetch user");
             }
             const data = await res.json();
-            console.log(data);
-            setUsername(data.user.userName);
-            setProfileImage(data.user.profileImage);
+            return data;
         } catch (error) {
             console.log(error);
         }
     }
 
     useEffect(() => {
-        getUserId(authorId);
+        const fetchData = async () => {
+            const data = await getUserId(authorId);
+            setUsername(data.user.userName);
+            setProfileImage(data.user.profileImage);
+        };
+        if (authorId) {
+            fetchData();
+        }
     }, [authorId]);
 
     if (username === "") {
@@ -48,7 +53,7 @@ const Comment = (
     return (
         <div className="flex w-full items-center mt-4">
             <div className="flex">
-                {!NoAvatar && <Avatar className="hidden h-9 w-9 ml-4 sm:flex">
+                {!NoAvatar && username !== undefined && <Avatar className="hidden h-9 w-9 ml-4 sm:flex">
                     <AvatarImage src={profileImage} alt="Avatar" />
                     <AvatarFallback className="bg-green-200">{username[0] + username[1]}</AvatarFallback>
                 </Avatar>}
