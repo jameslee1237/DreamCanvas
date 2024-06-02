@@ -43,7 +43,7 @@ export default function UserPage() {
   }
 
   return (
-    <div className="flex ml-6 w-[75vw]">
+    <div className="flex ml-6 w-[75vw] justify-center">
       <div className="flex">
         <Separator orientation="vertical" className="bg-black" />
       </div>
@@ -71,9 +71,9 @@ export default function UserPage() {
             </tbody>
           </table>
         </div>
-        <Separator className="bg-black ml-[30px] w-[60vw]" />
+        <Separator className="bg-black w-[60vw]" />
         <div className="flex items-center w-full justify-center">
-          <Tabs defaultValue="account" className="max-w-[70vw] mt-4 ml-10">
+          <Tabs defaultValue="account" className="max-w-[70vw] mt-4">
             <TabsList className="flex items-center bg-inherit text-black">
               <TabsTrigger value="account">Posts</TabsTrigger>
               <TabsTrigger value="password">Saved Posts</TabsTrigger>
@@ -81,7 +81,7 @@ export default function UserPage() {
             <TabsContent value="account" className="text-center flex">
               <div className="flex flex-col max-w-full justify-center">
                 {images ? (
-                  <div className="flex flex-wrap justify-start gap-4 ml-[60px]">
+                  <div className="flex flex-wrap justify-start gap-x-8 gap-y-4">
                     {images.map((image, index) => (
                       <PostCard
                         key={image}
