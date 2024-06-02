@@ -32,7 +32,7 @@ const PostCard = ({ image, postid }: PostCardProps) => {
     const [fullval, setfullVal] = useState("");
     const [fulltyped, setfullTyped] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
-
+    const [portrait, setPortrait] = useState<boolean | null>(null);
 
     const hasTypedFull = (e: ChangeEvent<HTMLInputElement>) => {
         const typedValue = e.target.value;
@@ -91,6 +91,17 @@ const PostCard = ({ image, postid }: PostCardProps) => {
         getComments(postid);
     }, [postid]);
 
+    useEffect(() => {
+        if (image === "") {
+            return;
+        }
+        const img = new window.Image();
+        img.src = image;
+        img.onload = () => {
+            setPortrait(img.width < img.height);
+        };
+    }, [image])
+
     if (comments === null || authorIds === null) {
         return (
             <div>
@@ -107,29 +118,29 @@ const PostCard = ({ image, postid }: PostCardProps) => {
                         src={image}
                         alt="image"
                         sizes="20vw"
-                        width={300}
-                        height={200}
+                        width={600}
+                        height={400}
                         priority={true}
                     />
                 </div>
             </button>
-            <div className="flex">
+            <div className="flex h-full">
                 <Dialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
                     <DialogTrigger asChild>
                     </DialogTrigger>
                     <DialogContent>
                         <div className="flex h-full">
-                            <div className="flex h-full bg-black items-center w-1/2">
+                            <div className="flex h-full bg-black items-center justify-center w-1/2">
                                 <button>
-                                    <EllipsisVerticalIcon className="absolute top-2 right-2" />
+                                    <EllipsisVerticalIcon className="absolute top-4 right-2" />
                                 </button>
                                 <Image
                                     src={image}
                                     alt="test"
                                     sizes="512px"
-                                    style={{
-                                        width: "100%",
-                                        height: "auto",
+                                    style={{ 
+                                        width: portrait ? "auto" : "100%",
+                                        height: portrait ? "100%" : "auto"
                                     }}
                                     priority={true}
                                     width={2500}

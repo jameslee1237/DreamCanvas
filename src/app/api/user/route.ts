@@ -6,21 +6,41 @@ export async function GET(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url);
         const authorId = searchParams.get("authorId");
+        const post_bool = searchParams.get("post");
         if (authorId) {
-            const user = await prisma.user.findUnique({
-                where: {
-                    id: authorId
-                },
-                select: {
-                    userName: true,
-                    profileImage: true
-                }
-            });
-            if (!user) {
-                throw new Error("User not found " + authorId);
+            if (!post_bool) {
+                const user = await prisma.user.findUnique({
+                    where: {
+                        id: authorId
+                    },
+                    select: {
+                        userName: true,
+                        profileImage: true,
+                    }
+                });
+                if (!user) {
+                    throw new Error("User not found " + authorId);
+                }    
+                return NextResponse.json({ success: true, user });
             }
-            
-            return NextResponse.json({ success: true, user });
+            else {
+                const user = await prisma.user.findUnique({
+                    where: {
+                        id: authorId
+                    },
+                    select: {
+                        userName: true,
+                        profileImage: true,
+                        posts: true,
+                        followedByIds: true,
+                        followingIds: true,
+                    }
+                })
+                if (!user) {
+                    throw new Error("User not found " + authorId);
+                }    
+                return NextResponse.json({ success: true, user });
+            }
         }
         else {
             const posts = await getPost();

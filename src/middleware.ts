@@ -9,7 +9,7 @@ export default authMiddleware({
       return NextResponse.redirect(new URL('/main', req.url));
     }
 
-    if (!auth.userId && (req.url.includes("/main") || req.url.includes("/message") || req.url.includes("/user-profile"))){
+    if (!auth.userId && (req.url.includes("/main") || req.url.includes("/message") || req.url.includes("/user-page"))){
       return NextResponse.redirect(new URL('/', req.url))
     }
 
