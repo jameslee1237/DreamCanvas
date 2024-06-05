@@ -14,6 +14,8 @@ export default function UserPage() {
   const [postids, setPostIds] = useState<string[]>([]);
   const [following, setFollowing] = useState<string[]>([]);
   const [followers, setFollowers] = useState<string[]>([]);
+  const [savedposts, setSavedposts] = useState<string[]>([]);
+  const [savedpostids, setSavedpostIds] = useState<string[]>([]);
   const user_id = getCurrentUser().userData.id;
 
   useEffect(() => {
@@ -26,6 +28,10 @@ export default function UserPage() {
           const data = await post.json();
           const images = data.user.posts.map((item: any) => item.image);
           const postids = data.user.posts.map((item: any) => item.id);
+          const temp = data.user.SavedPosts.map((item: any) => item.image);
+          const temp2 = data.user.SavedPosts.map((item: any) => item.id);
+          setSavedposts(temp);
+          setSavedpostIds(temp2);
           setImages(images);
           setPostIds(postids);
           setFollowing(data.user.followingIds.length.toString());
@@ -73,29 +79,61 @@ export default function UserPage() {
         </div>
         <Separator className="bg-black w-[60vw]" />
         <div className="flex items-center w-full justify-center">
-          <Tabs defaultValue="account" className="max-w-[70vw] mt-4">
+          <Tabs
+            defaultValue="post"
+            className="max-w-[70vw] mt-4 justify-center text-center"
+          >
             <TabsList className="flex items-center bg-inherit text-black">
-              <TabsTrigger value="account">Posts</TabsTrigger>
-              <TabsTrigger value="password">Saved Posts</TabsTrigger>
+              <TabsTrigger value="post">Posts</TabsTrigger>
+              <TabsTrigger value="savedpost">Saved Posts</TabsTrigger>
             </TabsList>
-            <TabsContent value="account" className="text-center flex">
-              <div className="flex flex-col max-w-full justify-center">
-                {images ? (
-                  <div className="flex flex-wrap justify-start gap-x-8 gap-y-4">
-                    {images.map((image, index) => (
-                      <PostCard
-                        key={image}
-                        image={image}
-                        postid={postids[index]}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div>
-                    <Skeleton className="w-[300px] h-[200px] rounded-lg" />
-                  </div>
-                )}
-              </div>
+            <TabsContent value="post" className="text-center flex">
+              {images.length !== 0 ? (
+                <div className="flex flex-col max-w-full justify-center">
+                  {images ? (
+                    <div className="flex flex-wrap justify-start gap-x-8 gap-y-4">
+                      {images.map((image, index) => (
+                        <PostCard
+                          key={image}
+                          image={image}
+                          postid={postids[index]}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div>
+                      <Skeleton className="w-[300px] h-[200px] rounded-lg" />
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex"></div>
+              )}
+            </TabsContent>
+            <TabsContent value="savedpost" className="text-center flex">
+              {savedpostids.length !== 0 ? (
+                <div className="flex flex-col max-w-full justify-center">
+                  {savedposts ? (
+                    <div className="flex flex-wrap justify-start gap-x-8 gap-y-4">
+                      {savedposts.map((image, index) => (
+                        <PostCard
+                          key={image}
+                          image={image}
+                          postid={savedpostids[index]}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div>
+                      <Skeleton className="w-[300px] h-[200px] rounded-lg" />
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex justify-center text-center w-full">
+                  <h1 className="text-center">No saved posts</h1>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>

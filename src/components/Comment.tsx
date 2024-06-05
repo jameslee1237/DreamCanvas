@@ -37,7 +37,7 @@ const Comment = (
         }
     }, [authorId]);
 
-    if (username === "") {
+    if (username === "" || username === undefined) {
         return (
             <div>
                 <Skeleton className="w-[90%] h-[50px]" />
@@ -45,9 +45,11 @@ const Comment = (
         )
     }
 
-    if (comment === "") {
+    if (comment === "" || comment === undefined) {
         return (
-            <div></div>
+            <div>
+                <Skeleton className="w-[90%] h-[50px]" />
+            </div>
         )
     }
     return (

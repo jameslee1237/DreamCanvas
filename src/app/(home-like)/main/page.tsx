@@ -75,7 +75,6 @@ export default function Home() {
       </div>
     );
   }
-  
 
   const randomItem = extractData[0]
   const randomItem1 = extractData[1]

@@ -18,10 +18,17 @@ model Post {
   tags String?
   feed String
   image String
-  likes Int @default(0)
   authorId String 
   author User @relation(fields: [authorId], references: [id])
   comments Comment[]
+  
+  likes Int @default(0)
+  likedByIds String[]
+  likedBy User[] @relation("UserLikes", fields: [likedByIds], references: [id])
+  
+  saved Int @default(0)
+  savedByIds String[]
+  savedBy User[] @relation("UserSaves", fields: [savedByIds], references: [id])
 }
 
 model User {
@@ -39,6 +46,12 @@ model User {
 
   followingIds String[] 
   following    User[]   @relation("UserFollows", fields: [followingIds], references: [id])
+
+  LikedPostsIds String[]
+  LikedPosts    Post[]   @relation("UserLikes", fields: [LikedPostsIds], references: [id])
+
+  SavedPostsIds String[]
+  SavedPosts    Post[]   @relation("UserSaves", fields: [SavedPostsIds], references: [id])
 
   comments Comment[]
   commentsIds String[]

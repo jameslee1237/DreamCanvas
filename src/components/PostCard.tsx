@@ -24,9 +24,9 @@ interface PostCardProps {
 }
 
 const PostCard = ({ image, postid }: PostCardProps) => {
-  const id = getCurrentUser().userData.id;
-  const userName = getCurrentUser().userData.userName;
-  const profile = getCurrentUser().userData.profileImage;
+  const [id, setId] = useState("");
+  const [userName, setUserName] = useState("");
+  const [profile, setProfile] = useState("");
   const [comments, setComments] = useState<string[] | null>(null);
   const [authorIds, setAuthorIds] = useState<string[] | null>(null);
   const [fullval, setfullVal] = useState("");
@@ -39,6 +39,23 @@ const PostCard = ({ image, postid }: PostCardProps) => {
     setfullTyped(typedValue.length > 0);
     setfullVal(typedValue);
   };
+
+  const getAuthorId = async () => {
+    try {
+      const res = await fetch(`/api/post?post_id=${postid}`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch post");
+      }
+      const data = await res.json();
+      setId(data.post.authorId);
+      const res2 = await fetch(`/api/user?authorId=${data.post.authorId}&post=false`);
+      const data2 = await res2.json();
+      setUserName(data2.user.userName);
+      setProfile(data2.user.profileImage);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const handleDialogOpenChange = () => {
     if (dialogOpen) {
@@ -88,6 +105,7 @@ const PostCard = ({ image, postid }: PostCardProps) => {
 
   useEffect(() => {
     getComments(postid);
+    getAuthorId();
   }, [postid]);
 
   useEffect(() => {
@@ -130,7 +148,7 @@ const PostCard = ({ image, postid }: PostCardProps) => {
             <div className="flex h-full">
               <div className="flex h-full bg-black items-center justify-center w-1/2">
                 <DropdownMenu>
-                  <DropdownMenuTrigger>
+                  <DropdownMenuTrigger asChild>
                     <button>
                       <EllipsisVerticalIcon className="absolute top-4 right-2" />
                     </button>
@@ -144,7 +162,6 @@ const PostCard = ({ image, postid }: PostCardProps) => {
                     <DropdownMenuItem>Subscription</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-
                 <Image
                   src={image}
                   alt="test"
