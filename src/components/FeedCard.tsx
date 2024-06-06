@@ -19,22 +19,20 @@ import { Separator } from "./ui/separator";
 import { getCurrentUser } from "@/app/actions/getCurrentUser";
 import Comment from "@/components/Comment";
 import { Skeleton } from "@/components/ui/skeleton";
-import { feedcardutil } from "@/app/actions/feedcardutil";
+import { feedcardutil } from "@/app/actions/feedcardutil";  
 
 interface FeedCardProps {
   image: string;
   postid: string;
+  curr_id: string;
 }
 
-const FeedCard = ({ image, postid }: FeedCardProps) => {
-  const [clickedBM, setClickedBM] = useState(false);
+const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
   const [comments, setComments] = useState<string[] | null>(null);
   const [authorIds, setAuthorIds] = useState<string[] | null>(null);
-  const [p_likes, setP_likes] = useState<string | null>(null);
-  const [p_likedby, setP_likedby] = useState<string[] | null>(null);
-  const [p_saved, setP_saved] = useState<string | null>(null);
-  const [p_savedby, setP_savedby] = useState<string[] | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
+  const [liked, setLiked] = useState<boolean>(false);
+  const [saved, setSaved] = useState<boolean>(false);
   const [profileImage, setProfileImage] = useState<string | undefined>(
     undefined
   );
@@ -53,9 +51,8 @@ const FeedCard = ({ image, postid }: FeedCardProps) => {
     hasTypedFull,
     handleDialogOpenChange,
   } = feedcardutil();
-  const id = getCurrentUser().userData.id;
 
-  const getAuthorId = async (post_id: string) => {
+  const getAuthorData = async (post_id: string) => {
     try {
       const res = await fetch(`/api/post?post_id=${post_id}`);
       if (!res.ok) {
@@ -63,14 +60,17 @@ const FeedCard = ({ image, postid }: FeedCardProps) => {
       }
       const data = await res.json();
       const p_authorId = data.post.authorId;
-      const likes = data.post.likes.toString();
-      const likedby = data.post.likedByIds;
-      const saved = data.post.saved.toString();
-      const savedBy = data.post.savedByIds;
-      setP_likedby(likedby);
-      setP_likes(likes);
-      setP_saved(saved);
-      setP_savedby(savedBy);
+      const _res = await fetch(`/api/post?post_id=${post_id}&userId=${curr_id}`);
+      if (!_res.ok) {
+        throw new Error("Failed to fetch post");
+      }
+      const _data = await _res.json();
+      if (_data.like !== null) {
+        setLiked(true);
+      }
+      if (_data.save !== null) {
+        setSaved(true);
+      }
       const res_user = await fetch(`/api/user?authorId=${p_authorId}`);
       if (!res_user.ok) {
         throw new Error("Failed to fetch user");
@@ -87,7 +87,7 @@ const FeedCard = ({ image, postid }: FeedCardProps) => {
       const commentData = {
         comment: fullval,
         postId: postid,
-        authorId: id,
+        authorId: curr_id,
       };
       const res = await fetch("/api/comment/new", {
         method: "POST",
@@ -101,7 +101,8 @@ const FeedCard = ({ image, postid }: FeedCardProps) => {
       }
       setfullVal("");
 
-      await getComments(postid);
+      setComments((prevComments) => prevComments ? [...prevComments, fullval] : [fullval]);
+      setAuthorIds((prevAuthorIds) => prevAuthorIds ? [...prevAuthorIds, curr_id] : [curr_id]);
     } catch (error) {
       console.log(error);
     }
@@ -112,7 +113,7 @@ const FeedCard = ({ image, postid }: FeedCardProps) => {
       const commentData = {
         comment: val,
         postId: postid,
-        authorId: id,
+        authorId: curr_id,
       };
       const res = await fetch("/api/comment/new", {
         method: "POST",
@@ -125,152 +126,49 @@ const FeedCard = ({ image, postid }: FeedCardProps) => {
         throw new Error("Failed to create comment");
       }
       setVal("");
+
+      setComments((prevComments) => prevComments ? [...prevComments, val] : [val]);
+      setAuthorIds((prevAuthorIds) => prevAuthorIds ? [...prevAuthorIds, curr_id] : [curr_id]);
     } catch (error) {
       console.log(error);
     }
   };
 
   const handleLikes = async () => {
-    if (p_likes === null) {
-      return;
-    }
-    let newLike;
     try {
-      if (p_likedby && !p_likedby.includes(id)) {
-        newLike = (parseInt(p_likes) + 1).toString();
-        const response = await fetch("/api/user", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            add: true,
-            post_id: postid,
-            user_id: id,
-            like: true,
-          }),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to update likedBy");
-        }
-      } else {
-        if (parseInt(p_likes) === 0) {
-          newLike = "0";
-        } else {
-          newLike = (parseInt(p_likes) - 1).toString();
-        }
-        const response = await fetch("/api/user", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            add: false,
-            post_id: postid,
-            user_id: id,
-            like: true,
-          }),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to update likedBy");
-        }
-      }
-      setP_likes(newLike);
-      const res = await fetch("/api/post", {
+      const likeData = {
+        postId: postid,
+        userId: curr_id,
+        add: !liked
+      };
+      const res = await fetch("/api/like", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          like: true,
-          likes: newLike,
-          post_id: postid,
-          user_id: id,
-        }),
+        body: JSON.stringify(likeData),
       });
-      if (!res.ok) {
-        throw new Error("Failed to update likes");
-      }
-      const res2 = await fetch(`/api/post?post_id=${postid}`);
-      if (!res2.ok) {
-        throw new Error("Failed to fetch post");
-      }
-      const data = await res2.json();
-      const likedby = data.post.likedByIds;
-      setP_likedby(likedby);
+      setLiked((prev) => !prev);
     } catch (error) {
       console.log(error);
     }
   };
 
   const handleSaves = async () => {
-    if (p_saved === null) {
-      return;
-    }
-    let newSave;
-    try {
-      if (p_savedby && !p_savedby.includes(id)) {
-        newSave = (parseInt(p_saved) + 1).toString();
-        const response = await fetch("/api/user", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            add: true,
-            post_id: postid,
-            user_id: id,
-            like: false,
-          }),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to update savedBy");
-        }
-      } else {
-        if (parseInt(p_saved) === 0) {
-          newSave = "0";
-        } else {
-          newSave = (parseInt(p_saved) - 1).toString();
-        }
-        const response = await fetch("/api/user", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            add: false,
-            post_id: postid,
-            user_id: id,
-            like: false,
-          }),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to update savedBy");
-        }
-      }
-      setP_saved(newSave);
-      const res = await fetch("/api/post", {
+    try{
+      const saveData = {
+        postId: postid,
+        userId: curr_id,
+        add: !saved
+      };
+      const res = await fetch("/api/save", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          like: false,
-          likes: newSave,
-          post_id: postid,
-          user_id: id,
-        }),
+        body: JSON.stringify(saveData),
       });
-      if (!res.ok) {
-        throw new Error("Failed to update saves");
-      }
-      const res2 = await fetch(`/api/post?post_id=${postid}`);
-      if (!res2.ok) {
-        throw new Error("Failed to fetch post");
-      }
-      const data = await res2.json();
-      const savedby = data.post.savedByIds;
-      setP_savedby(savedby);
+      setSaved((prev) => !prev);
     } catch (error) {
       console.log(error);
     }
@@ -292,9 +190,8 @@ const FeedCard = ({ image, postid }: FeedCardProps) => {
   useEffect(() => {
     if (effectRan.current) return;
     const fetchData = async () => {
-      const data = await getAuthorId(postid);
+      const data = await getAuthorData(postid);
       const data2 = await getComments(postid);
-      console.log(data);
       setUserName(data.user.userName);
       setProfileImage(data.user.profileImage);
       setComments(data2.comments.map((comment: any) => comment.comment));
@@ -345,14 +242,14 @@ const FeedCard = ({ image, postid }: FeedCardProps) => {
           </button>
           <div className="flex justify-between -mb-6">
             <button onClick={handleLikes}>
-              {p_likedby && p_likedby.includes(id) ? (
+              {liked ? (
                 <FavoriteIcon fontSize="large" sx={{ color: red[500] }} />
               ) : (
                 <FavoriteBorderIcon fontSize="large" />
               )}
             </button>
             <button onClick={handleSaves}>
-              {p_savedby && p_savedby.includes(id) ? (
+              {saved ? (
                 <BookmarkIcon fontSize="large" sx={{ color: grey[700] }} />
               ) : (
                 <BookmarkBorderIcon fontSize="large" />

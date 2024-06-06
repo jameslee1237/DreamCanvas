@@ -20,6 +20,19 @@ export default function UserPage() {
 
   useEffect(() => {
     if (user_id !== "") {
+      const fetchSavedPost = async (postid: string) => {
+        try {
+          const response = await fetch(`/api/post?post_id=${postid}`)
+          if (!response.ok) {
+            throw new Error("Failed to fetch post");
+          }
+          const postData = await response.json();
+          return postData;
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
       const fetchPost = async () => {
         try {
           const post = await fetch(
@@ -28,14 +41,20 @@ export default function UserPage() {
           const data = await post.json();
           const images = data.user.posts.map((item: any) => item.image);
           const postids = data.user.posts.map((item: any) => item.id);
-          const temp = data.user.SavedPosts.map((item: any) => item.image);
-          const temp2 = data.user.SavedPosts.map((item: any) => item.id);
-          setSavedposts(temp);
-          setSavedpostIds(temp2);
+          const savedposts = data.user.saves.map((item: any) => item.postId);
+          const savedPostsImages = [];
+          for (const postid of savedposts) {
+            const postData = await fetchSavedPost(postid);
+            if(postData && postData.post && postData.post.image) {
+              savedPostsImages.push(postData.post.image);
+            }
+          }
           setImages(images);
           setPostIds(postids);
-          setFollowing(data.user.followingIds.length.toString());
-          setFollowers(data.user.followedByIds.length.toString());
+          setSavedpostIds(savedposts);
+          setSavedposts(savedPostsImages);
+          setFollowing(data.user.following.length.toString());
+          setFollowers(data.user.followers.length.toString());
         } catch (error) {
           console.log(error);
         }
@@ -61,18 +80,18 @@ export default function UserPage() {
         <div className="flex">
           <h1 className="text-[30px] font-bold">{user.username}</h1>
         </div>
-        <div className="flex mt-4 mb-4 justify-between font-semibold">
-          <table className="w-[15vw]">
+        <div className="flex mt-4 mb-4 font-semibold">
+          <table className="w-[20vw]">
             <tbody>
               <tr>
-                <th>{images.length}</th>
-                <th>{following}</th>
-                <th>{followers}</th>
+                <th className="w-[36%]">{following}</th>
+                <th className="w-[28%]">{followers}</th>
+                <th className="w-[36%]">{images.length}</th>
               </tr>
               <tr>
-                <th>Posts</th>
                 <th>Followers</th>
                 <th>Following</th>
+                <th>Posts</th>
               </tr>
             </tbody>
           </table>

@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
                 feed: feed,
                 image: url,
                 authorId: authorId,
-                tags: "tempTag"
+                tags: "tempTag",
             }
         })
         return NextResponse.json({ success: true, response });

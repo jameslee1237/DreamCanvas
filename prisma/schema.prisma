@@ -14,74 +14,93 @@ datasource db {
 }
 
 model Post {
-  id String @id @default(uuid()) @map("_id")
-  tags String?
-  feed String
-  image String
-  authorId String 
-  author User @relation(fields: [authorId], references: [id])
-  comments Comment[]
-  
-  likes Int @default(0)
-  likedByIds String[]
-  likedBy User[] @relation("UserLikes", fields: [likedByIds], references: [id])
-  
-  saved Int @default(0)
-  savedByIds String[]
-  savedBy User[] @relation("UserSaves", fields: [savedByIds], references: [id])
+  id        String   @id @default(uuid()) @map("_id")
+  tags      String?
+  feed      String
+  image     String
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  comments  Comment[]
+  likes     Like[]
+  saves     Save[]
 }
 
 model User {
-  id String @id @default(uuid()) @map("_id")
-  clerkId String @unique
-  firstName String
-  lastName String
-  userName String
-  email String 
-  posts Post[]
+  id           String     @id @default(uuid()) @map("_id")
+  clerkId      String     @unique
+  firstName    String
+  lastName     String
+  userName     String
+  email        String
   profileImage String?
-
-  followedByIds String[]
-  followedBy    User[]   @relation("UserFollows", fields: [followedByIds], references: [id])
-
-  followingIds String[] 
-  following    User[]   @relation("UserFollows", fields: [followingIds], references: [id])
-
-  LikedPostsIds String[]
-  LikedPosts    Post[]   @relation("UserLikes", fields: [LikedPostsIds], references: [id])
-
-  SavedPostsIds String[]
-  SavedPosts    Post[]   @relation("UserSaves", fields: [SavedPostsIds], references: [id])
-
-  comments Comment[]
-  commentsIds String[]
-
-  conversations Conversation[] @relation(fields: [conversationIds], references: [id])
-  conversationIds String[]
+  posts        Post[]
+  followers    Follow[]   @relation("UserFollowers")
+  following    Follow[]   @relation("UserFollowing")
+  likes        Like[]
+  saves        Save[]
+  comments     Comment[]
+  conversations Participant[]
+  messages     Message[]
 }
 
 model Comment {
-  id String @id @default(uuid()) @map("_id")
-  comment String
+  id       String @id @default(uuid()) @map("_id")
+  comment  String
   authorId String
-  author User @relation(fields: [authorId], references: [id])
-  postId String
-  post Post @relation(fields: [postId], references: [id])
+  author   User   @relation(fields: [authorId], references: [id])
+  postId   String
+  post     Post   @relation(fields: [postId], references: [id])
 }
 
 model Conversation {
-  id String @id @default(uuid()) @map("_id")
-  participants User[] @relation(fields: [participantsIds], references: [id])
-  participantsIds String[] 
-
-  messages Message[]
+  id              String @id @default(uuid()) @map("_id")
+  participants    Participant[]
+  lastMessageAt   DateTime @default(now())
+  messages        Message[]
 }
 
 model Message {
-  id String @id @default(uuid()) @map("_id")
-  content String
-  authorId String
+  id              String @id @default(uuid()) @map("_id")
+  content         String
+  authorId        String
+  author          User   @relation(fields: [authorId], references: [id])
+  createdAt       DateTime @default(now())
+  conversationId  String
+  conversation    Conversation @relation(fields: [conversationId], references: [id])
+}
 
-  conversationId String
-  conversation Conversation @relation(fields: [conversationId], references: [id])
+model Follow {
+  id             String @id @default(uuid()) @map("_id")
+  followerId     String
+  followingId    String
+  follower       User   @relation("UserFollowers", fields: [followerId], references: [id])
+  following      User   @relation("UserFollowing", fields: [followingId], references: [id])
+}
+
+model Like {
+  id        String @id @default(uuid()) @map("_id")
+  userId    String
+  postId    String
+  user      User   @relation(fields: [userId], references: [id])
+  post      Post   @relation(fields: [postId], references: [id])
+
+  @@unique(fields: [userId, postId], name: "search_like")
+}
+
+model Save {
+  id        String @id @default(uuid()) @map("_id")
+  userId    String
+  postId    String
+  user      User   @relation(fields: [userId], references: [id])
+  post      Post   @relation(fields: [postId], references: [id])
+
+  @@unique(fields: [userId, postId], name: "search_save")
+}
+
+model Participant {
+  id              String @id @default(uuid()) @map("_id")
+  userId          String
+  conversationId  String
+  user            User         @relation(fields: [userId], references: [id])
+  conversation    Conversation @relation(fields: [conversationId], references: [id])
 }

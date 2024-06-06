@@ -1,5 +1,4 @@
 "use client";
-
 import { useUser } from "@clerk/nextjs";
 import React, { useState, useEffect } from "react";
 import SearchIcon from "@mui/icons-material/Search";
@@ -15,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getCurrentUser } from "@/app/actions/getCurrentUser";
 
 export default function Home() {
   const [extractData, setExtractData] = useState<
@@ -44,6 +44,7 @@ export default function Home() {
   });
 
   const { isLoaded, isSignedIn, user } = useUser();
+  const id = getCurrentUser().userData.id;
 
   const getPost = async () => {
     try {
@@ -101,8 +102,8 @@ export default function Home() {
           </div>
         </div>
         <div className="flex flex-col items-center">
-          <FeedCard image={randomItem.image} postid={randomItem.id} />
-          <FeedCard image={randomItem1.image} postid={randomItem1.id} />
+          <FeedCard image={randomItem.image} postid={randomItem.id} curr_id={id} />
+          <FeedCard image={randomItem1.image} postid={randomItem1.id} curr_id={id} />
         </div>
       </div>
       <div className="flex w-[30vw]">

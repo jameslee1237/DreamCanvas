@@ -64,6 +64,7 @@ const PostCard = ({ image, postid }: PostCardProps) => {
     }
     setDialogOpen((prev) => !prev);
   };
+
   const handlefullValComment = async () => {
     try {
       const commentData = {
@@ -83,7 +84,8 @@ const PostCard = ({ image, postid }: PostCardProps) => {
       }
       setfullVal("");
 
-      await getComments(postid);
+      setComments((prevComments) => prevComments ? [...prevComments, fullval] : [fullval]);
+      setAuthorIds((prevAuthorIds) => prevAuthorIds ? [...prevAuthorIds, id] : [id]);
     } catch (error) {
       console.log(error);
     }

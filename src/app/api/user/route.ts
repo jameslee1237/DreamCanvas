@@ -28,13 +28,11 @@ export async function GET(req: NextRequest) {
                     where: {
                         id: authorId
                     },
-                    select: {
-                        userName: true,
-                        profileImage: true,
+                    include: {
                         posts: true,
-                        followedByIds: true,
-                        followingIds: true,
-                        SavedPosts: true,
+                        saves: true,
+                        following: true,
+                        followers: true,
                     }
                 })
                 if (!user) {
@@ -61,72 +59,6 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         const data = await req.json();
-        const { add, post_id, user_id, like } = data;
-        if (add) {
-            if (like) {
-                await prisma.user.update({
-                    where: {
-                        id: user_id,
-                    },
-                    data: {
-                        LikedPostsIds: {
-                            push: post_id,
-                        }
-                    }
-                });
-            }
-            else {
-                await prisma.user.update({
-                    where: {
-                        id: user_id,
-                    },
-                    data: {
-                        SavedPostsIds: {
-                            push: post_id,
-                        }
-                    }
-                });
-            }
-        }
-        else {
-            const current_user = await prisma.user.findUnique({
-                where: {
-                    id: user_id,
-                },
-                select: {
-                    LikedPostsIds: true,
-                    SavedPostsIds: true,
-                }
-            });
-            if (like) {
-                const LikedPostsIds = current_user?.LikedPostsIds
-                if (!LikedPostsIds) return NextResponse.json({ success: false });
-                await prisma.user.update({
-                    where: {
-                        id: user_id,
-                    },
-                    data: {
-                        LikedPostsIds: {
-                            set: LikedPostsIds.filter((id: string) => id !== post_id),
-                        }
-                    }
-                });
-            }
-            else {
-                const SavedPostsIds = current_user?.SavedPostsIds
-                if (!SavedPostsIds) return NextResponse.json({ success: false });
-                await prisma.user.update({
-                    where: {
-                        id: user_id,
-                    },
-                    data: {
-                        SavedPostsIds: {
-                            set: SavedPostsIds.filter((id: string) => id !== post_id),
-                        }
-                    }
-                });
-            }
-        }
         return NextResponse.json({ success: true });
     } catch (error) {
         return NextResponse.json({ error: error instanceof Error ? error.message : String(error) });
