@@ -7,23 +7,21 @@ import { Separator } from "./ui/separator";
 import Comment from "./Comment";
 import Input from "@mui/material/Input";
 import { EllipsisVerticalIcon } from "lucide-react";
-import { getCurrentUser } from "@/app/actions/getCurrentUser";
 import { Skeleton } from "./ui/skeleton";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
 interface PostCardProps {
   image: string;
   postid: string;
+  onDelete?: () => void;
 }
 
-const PostCard = ({ image, postid }: PostCardProps) => {
+const PostCard = ({ image, postid, onDelete }: PostCardProps) => {
   const [id, setId] = useState("");
   const [userName, setUserName] = useState("");
   const [profile, setProfile] = useState("");
@@ -33,11 +31,39 @@ const PostCard = ({ image, postid }: PostCardProps) => {
   const [fulltyped, setfullTyped] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [portrait, setPortrait] = useState<boolean | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [deleting, setDeleting] = useState<boolean | null>(null);
 
   const hasTypedFull = (e: ChangeEvent<HTMLInputElement>) => {
     const typedValue = e.target.value;
     setfullTyped(typedValue.length > 0);
     setfullVal(typedValue);
+  };
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    setDropdownOpen(false);
+    setTimeout(() => setDialogOpen(false), 50);
+  };
+
+  const handleClose = () => {
+    setDropdownOpen(false);
+  };
+
+  const confirmDelete = async () => {
+    if (
+      deleting &&
+      window.confirm("Are you sure you want to delete this item?")
+    ) {
+      setDeleting(false);
+      if (onDelete){
+        onDelete();
+      }
+    }
+  };
+
+  const cancelDelete = () => {
+    setDeleting(false);
   };
 
   const getAuthorId = async () => {
@@ -48,14 +74,16 @@ const PostCard = ({ image, postid }: PostCardProps) => {
       }
       const data = await res.json();
       setId(data.post.authorId);
-      const res2 = await fetch(`/api/user?authorId=${data.post.authorId}&post=false`);
+      const res2 = await fetch(
+        `/api/user?authorId=${data.post.authorId}&post=false`
+      );
       const data2 = await res2.json();
       setUserName(data2.user.userName);
       setProfile(data2.user.profileImage);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const handleDialogOpenChange = () => {
     if (dialogOpen) {
@@ -63,6 +91,10 @@ const PostCard = ({ image, postid }: PostCardProps) => {
       setfullTyped(false);
     }
     setDialogOpen((prev) => !prev);
+  };
+
+  const handleDropDownOpenChange = () => {
+    setDropdownOpen((prev) => !prev);
   };
 
   const handlefullValComment = async () => {
@@ -84,8 +116,12 @@ const PostCard = ({ image, postid }: PostCardProps) => {
       }
       setfullVal("");
 
-      setComments((prevComments) => prevComments ? [...prevComments, fullval] : [fullval]);
-      setAuthorIds((prevAuthorIds) => prevAuthorIds ? [...prevAuthorIds, id] : [id]);
+      setComments((prevComments) =>
+        prevComments ? [...prevComments, fullval] : [fullval]
+      );
+      setAuthorIds((prevAuthorIds) =>
+        prevAuthorIds ? [...prevAuthorIds, id] : [id]
+      );
     } catch (error) {
       console.log(error);
     }
@@ -106,11 +142,6 @@ const PostCard = ({ image, postid }: PostCardProps) => {
   };
 
   useEffect(() => {
-    getComments(postid);
-    getAuthorId();
-  }, [postid]);
-
-  useEffect(() => {
     if (image === "") {
       return;
     }
@@ -120,6 +151,11 @@ const PostCard = ({ image, postid }: PostCardProps) => {
       setPortrait(img.width < img.height);
     };
   }, [image]);
+
+  useEffect(() => {
+    getComments(postid);
+    getAuthorId();
+  }, [postid]);
 
   if (comments === null || authorIds === null) {
     return (
@@ -149,19 +185,29 @@ const PostCard = ({ image, postid }: PostCardProps) => {
           <DialogContent>
             <div className="flex h-full">
               <div className="flex h-full bg-black items-center justify-center w-1/2">
-                <DropdownMenu>
+                <DropdownMenu
+                  open={dropdownOpen}
+                  onOpenChange={handleDropDownOpenChange}
+                >
                   <DropdownMenuTrigger asChild>
-                    <button>
-                      <EllipsisVerticalIcon className="absolute top-4 right-2" />
-                    </button>
+                    {onDelete ? <button>
+                      <EllipsisVerticalIcon
+                        onClick={() => setDropdownOpen(true)}
+                        className="absolute top-4 right-2"
+                      />
+                    </button> : <div></div>}
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="absolute -top-[300px] -right-[1000px]">
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>Profile</DropdownMenuItem>
-                    <DropdownMenuItem>Billing</DropdownMenuItem>
-                    <DropdownMenuItem>Team</DropdownMenuItem>
-                    <DropdownMenuItem>Subscription</DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="text-red-600"
+                      onClick={handleDelete}
+                    >
+                      Delete
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>Copy Link</DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleClose}>
+                      Cancel
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <Image
@@ -224,6 +270,29 @@ const PostCard = ({ image, postid }: PostCardProps) => {
             </div>
           </DialogContent>
         </Dialog>
+        {deleting && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white p-4 rounded-md shadow-md">
+              <h2 className="text-lg">
+                Are you sure you want to delete this item?
+              </h2>
+              <div className="mt-4 flex justify-center">
+                <button
+                  onClick={cancelDelete}
+                  className="mr-2 hover:bg-gray-400 py-2 px-4 rounded-md"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="text-red-700 hover:bg-red-400 py-2 px-4 rounded-md"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -36,6 +36,7 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
   const [profileImage, setProfileImage] = useState<string | undefined>(
     undefined
   );
+  const [portrait, setPortrait] = useState<boolean | null>(null);
   const effectRan = useRef(false);
 
   const {
@@ -188,6 +189,17 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
   };
 
   useEffect(() => {
+    if (image === "") {
+      return;
+    }
+    const img = new window.Image();
+    img.src = image;
+    img.onload = () => {
+      setPortrait(img.width < img.height);
+    };
+  }, [image]);
+
+  useEffect(() => {
     if (effectRan.current) return;
     const fetchData = async () => {
       const data = await getAuthorData(postid);
@@ -275,15 +287,15 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
                 </DialogTrigger>
                 <DialogContent>
                   <div className="flex h-full">
-                    <div className="flex h-full bg-black items-center w-1/2">
+                    <div className="flex h-full bg-black items-center justify-center w-1/2">
                       {image ? (
                         <Image
                           src={image}
                           alt="test"
                           sizes="512px"
                           style={{
-                            width: "100%",
-                            height: "auto",
+                            width: portrait ? "auto" : "100%",
+                            height: portrait ? "100%" : "auto",
                           }}
                           priority={true}
                           width={2500}

@@ -18,11 +18,15 @@ export default function UserPage() {
   const [savedpostids, setSavedpostIds] = useState<string[]>([]);
   const user_id = getCurrentUser().userData.id;
 
+  const handlePostDelete = async (postId: string) => {
+    console.log("need deleting logic")
+  };
+
   useEffect(() => {
     if (user_id !== "") {
       const fetchSavedPost = async (postid: string) => {
         try {
-          const response = await fetch(`/api/post?post_id=${postid}`)
+          const response = await fetch(`/api/post?post_id=${postid}`);
           if (!response.ok) {
             throw new Error("Failed to fetch post");
           }
@@ -45,7 +49,7 @@ export default function UserPage() {
           const savedPostsImages = [];
           for (const postid of savedposts) {
             const postData = await fetchSavedPost(postid);
-            if(postData && postData.post && postData.post.image) {
+            if (postData && postData.post && postData.post.image) {
               savedPostsImages.push(postData.post.image);
             }
           }
@@ -116,6 +120,7 @@ export default function UserPage() {
                           key={image}
                           image={image}
                           postid={postids[index]}
+                          onDelete={() => handlePostDelete(postids[index])}
                         />
                       ))}
                     </div>

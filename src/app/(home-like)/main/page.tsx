@@ -86,8 +86,7 @@ export default function Home() {
   const handleSearchClick = (index: number) => () => {
     if (userids[index] === id) {
       router.push("/user-page");
-    }
-    else {
+    } else {
       router.push(`/user-page/${userids[index]}`);
     }
   };
@@ -157,10 +156,16 @@ export default function Home() {
                     )
                     .map((username) => (
                       <div key={username}>
-                        <div className="flex py-2 hover:bg-slate-400" onClick={handleSearchClick(usernames.indexOf(username))}>
+                        <div
+                          className="flex py-2 hover:bg-slate-400"
+                          onClick={handleSearchClick(
+                            usernames.indexOf(username)
+                          )}
+                        >
                           <Avatar className="ml-4">
-                            <AvatarImage src={profile[usernames.indexOf(username)]}></AvatarImage>
-                            <AvatarFallback>{username}</AvatarFallback>
+                            <AvatarImage
+                              src={profile[usernames.indexOf(username)]}
+                            ></AvatarImage>
                           </Avatar>
                           <div className="flex ml-4 justify-center text-center items-center">
                             <h1>{username}</h1>
@@ -169,6 +174,13 @@ export default function Home() {
                         <Separator />
                       </div>
                     ))}
+                  {usernames.filter((username) =>
+                    username.toLowerCase().includes(value.trim().toLowerCase())
+                  ).length === 0 && (
+                    <div className="flex py-2 justify-center items-center">
+                      Result not found
+                    </div>
+                  )}
                 </div>
               </ScrollArea>
             </PopoverContent>

@@ -50,6 +50,15 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const payload = await req.json();
+    const { postId, del } = payload;
+    if (del) {
+      await prisma.post.delete({
+        where: {
+          id: postId,
+        },
+      });
+      return NextResponse.json({ success: true, postId });
+    }
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({

@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PostCard from "@/components/PostCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { notFound } from "next/navigation";
+import CheckIcon from "@mui/icons-material/Check";
 
 interface UserPageProps {
   userId: string;
@@ -21,6 +22,15 @@ export default function UserPage({ params }: { params: UserPageProps }) {
   const [userName, setUserName] = useState<string>("");
   const [profile, setProfile] = useState<string>("");
   const [exists, setExists] = useState<boolean>(true);
+  const [followed, setFollowed] = useState<boolean>(false);
+
+  const handleFollow = async () => {
+    setFollowed(true);
+  };
+
+  const handleUnFollow = async () => {
+    setFollowed(false);
+  };
 
   useEffect(() => {
     if (params.userId !== "") {
@@ -79,7 +89,7 @@ export default function UserPage({ params }: { params: UserPageProps }) {
   if (!exists) {
     return notFound();
   }
-  
+
   return (
     <div className="flex ml-6 w-[75vw] justify-center">
       <div className="flex">
@@ -90,8 +100,24 @@ export default function UserPage({ params }: { params: UserPageProps }) {
           <AvatarImage src={profile}></AvatarImage>
           <AvatarFallback>JL</AvatarFallback>
         </Avatar>
-        <div className="flex">
+        <div className="flex justify-center text-center">
           <h1 className="text-[30px] font-bold">{userName}</h1>
+          {followed ? (
+            <button
+              onClick={handleUnFollow}
+              className="flex ml-4 jsutify-center items-center bg-white rounded-md px-5 py-2"
+            >
+              <CheckIcon className="mr-2" />
+              Followed
+            </button>
+          ) : (
+            <button
+              onClick={handleFollow}
+              className="ml-4 w-20 rounded-md bg-green-400 hover:bg-green-700 font-bold"
+            >
+              Follow
+            </button>
+          )}
         </div>
         <div className="flex mt-4 mb-4 font-semibold">
           <table className="w-[20vw]">
