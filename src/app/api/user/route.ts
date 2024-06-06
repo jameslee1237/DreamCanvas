@@ -7,6 +7,7 @@ export async function GET(req: NextRequest) {
         const { searchParams } = new URL(req.url);
         const authorId = searchParams.get("authorId");
         const post_bool = searchParams.get("post");
+        const list = searchParams.get("list");
         if (authorId) {
             if (!post_bool) {
                 const user = await prisma.user.findUnique({
@@ -18,8 +19,8 @@ export async function GET(req: NextRequest) {
                         profileImage: true,
                     }
                 });
-                if (!user) {
-                    throw new Error("User not found " + authorId);
+                if (!user || user === null) {
+                    return NextResponse.json({ success: false, error: "User not found"});
                 }    
                 return NextResponse.json({ success: true, user });
             }
@@ -42,25 +43,25 @@ export async function GET(req: NextRequest) {
             }
         }
         else {
-            const posts = await getPost();
-            const arr = posts.map((item) => item.image);
-            const arr2 = posts.map((item) => item.id);
-            if (!arr) {
-                throw new Error("Posts not found");
+            if(!list) {
+                const posts = await getPost();
+                const arr = posts.map((item) => item.image);
+                const arr2 = posts.map((item) => item.id);
+                if (!arr) {
+                    throw new Error("Posts not found");
+                }
+                return NextResponse.json({ success: true, posts: arr, postIds: arr2});
             }
-            return NextResponse.json({ success: true, posts: arr, postIds: arr2});
+            else {
+                const users = await prisma.user.findMany();
+                if (!users) {
+                    throw new Error("Users not found");
+                }
+                return NextResponse.json({ success: true, users });
+            }
         }
     }
     catch (error) {
-        return NextResponse.json({ error: error instanceof Error ? error.message : String(error) });
-    }
-}
-
-export async function POST(req: NextRequest) {
-    try {
-        const data = await req.json();
-        return NextResponse.json({ success: true });
-    } catch (error) {
         return NextResponse.json({ error: error instanceof Error ? error.message : String(error) });
     }
 }

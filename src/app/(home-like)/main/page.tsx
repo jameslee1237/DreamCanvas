@@ -15,6 +15,13 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getCurrentUser } from "@/app/actions/getCurrentUser";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover_Search";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 
 export default function Home() {
   const [extractData, setExtractData] = useState<
@@ -24,9 +31,23 @@ export default function Home() {
       }[]
     | null
   >(null);
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("");
+  const [userids, setUserids] = useState<string[]>([]);
+  const [profile, setProfile] = useState<string>("");
+  const [usernames, setUsernames] = useState<string[]>([]);
   const router = useRouter();
   const handleAvatarClick = () => {
     router.push("/user-page");
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value);
+    if (event.target.value.trim() !== "") {
+      setOpen(true);
+    } else {
+      setOpen(false);
+    }
   };
 
   const theme = createTheme({
@@ -62,8 +83,33 @@ export default function Home() {
     }
   };
 
+  const handleSearchClick = (index: number) => () => {
+    if (userids[index] === id) {
+      router.push("/user-page");
+    }
+    else {
+      router.push(`/user-page/${userids[index]}`);
+    }
+  };
+
+  const getUsers = async () => {
+    try {
+      const res = await fetch("/api/user?list=true");
+      const data = await res.json();
+      const ids = data.users.map((user: any) => user.id);
+      const usernames = data.users.map((user: any) => user.userName);
+      const images = data.users.map((user: any) => user.profileImage);
+      setUserids(ids);
+      setUsernames(usernames);
+      setProfile(images);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getPost();
+    getUsers();
   }, []);
 
   if (!isLoaded || !isSignedIn || extractData === null) {
@@ -77,24 +123,56 @@ export default function Home() {
     );
   }
 
-  const randomItem = extractData[0]
-  const randomItem1 = extractData[1]
+  const randomItem = extractData[0];
+  const randomItem1 = extractData[1];
+  const randomItem2 = extractData[3];
 
   return (
     <div className="flex w-[80vw] text-white">
       <div className="flex flex-col w-[70%]">
         <div className="flex h-[10%] mt-8 mb-4 items-center justify-center">
-          <ThemeProvider theme={theme}>
-            <OutlinedInput
-              placeholder="Search"
-              startAdornment={
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              }
-              size="small"
-            />
-          </ThemeProvider>
+          <Popover open={open}>
+            <PopoverTrigger>
+              <ThemeProvider theme={theme}>
+                <OutlinedInput
+                  placeholder="Search"
+                  onChange={handleChange}
+                  startAdornment={
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  }
+                  size="small"
+                />
+              </ThemeProvider>
+            </PopoverTrigger>
+            <PopoverContent>
+              <ScrollArea>
+                <div className="flex flex-col">
+                  {usernames
+                    .filter((username) =>
+                      username
+                        .toLowerCase()
+                        .includes(value.trim().toLowerCase())
+                    )
+                    .map((username) => (
+                      <div key={username}>
+                        <div className="flex py-2 hover:bg-slate-400" onClick={handleSearchClick(usernames.indexOf(username))}>
+                          <Avatar className="ml-4">
+                            <AvatarImage src={profile[usernames.indexOf(username)]}></AvatarImage>
+                            <AvatarFallback>{username}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex ml-4 justify-center text-center items-center">
+                            <h1>{username}</h1>
+                          </div>
+                        </div>
+                        <Separator />
+                      </div>
+                    ))}
+                </div>
+              </ScrollArea>
+            </PopoverContent>
+          </Popover>
           <div className="flex">
             <button className="bg-green-400 hover:bg-green-700 rounded-md px-2 py-1 ml-4">
               Search
@@ -102,8 +180,21 @@ export default function Home() {
           </div>
         </div>
         <div className="flex flex-col items-center">
-          <FeedCard image={randomItem.image} postid={randomItem.id} curr_id={id} />
-          <FeedCard image={randomItem1.image} postid={randomItem1.id} curr_id={id} />
+          <FeedCard
+            image={randomItem.image}
+            postid={randomItem.id}
+            curr_id={id}
+          />
+          <FeedCard
+            image={randomItem1.image}
+            postid={randomItem1.id}
+            curr_id={id}
+          />
+          <FeedCard
+            image={randomItem2.image}
+            postid={randomItem2.id}
+            curr_id={id}
+          />
         </div>
       </div>
       <div className="flex w-[30vw]">
