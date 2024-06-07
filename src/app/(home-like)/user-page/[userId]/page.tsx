@@ -132,7 +132,10 @@ export default function UserPage({ params }: { params: UserPageProps }) {
           console.log(error);
         }
       };
-      fetchPost();
+
+      if(params.userId){
+        fetchPost();
+      }
     }
   }, [params.userId]);
 

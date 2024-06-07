@@ -89,7 +89,9 @@ export default function UserPage() {
           console.log(error);
         }
       };
-      fetchPost();
+      if (user_id){
+        fetchPost();
+      }
     }
   }, [user_id]);
 

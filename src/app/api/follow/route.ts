@@ -39,18 +39,34 @@ export async function GET (req: NextRequest) {
         const { searchParams } = new URL(req.nextUrl);
         const follower_id = searchParams.get("follower_id");
         const following_id = searchParams.get("following_id");
-        if (!follower_id || !following_id) {
-            throw new Error("Missing follower_id or following_id");
-        }
-        const follow = await prisma.follow.findUnique({
-            where: {
-                search_follow: {
-                    followerId: follower_id,
-                    followingId: following_id,
-                }
+        const curr_id = searchParams.get("curr_id");
+        if (!curr_id) {
+            if (!follower_id || !following_id) {
+                throw new Error("Missing follower_id or following_id");
             }
-        });
-        return NextResponse.json({ success: true, follow });
+            const follow = await prisma.follow.findUnique({
+                where: {
+                    search_follow: {
+                        followerId: follower_id,
+                        followingId: following_id,
+                    }
+                }
+            });
+            return NextResponse.json({ success: true, follow });
+        }
+        else {
+            const all_follower = await prisma.follow.findMany({
+                where: {
+                    followerId: curr_id
+                }
+            });
+            const all_following = await prisma.follow.findMany({
+                where: {
+                    followingId: curr_id
+                }
+            });
+            return NextResponse.json({ success: true, all_follower, all_following });
+        }
     } catch (error) {
         return NextResponse.json({
             error: error instanceof Error ? error.message : String(error),
