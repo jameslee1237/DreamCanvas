@@ -25,8 +25,14 @@ export default function UserPage({ params }: { params: UserPageProps }) {
   const [exists, setExists] = useState<boolean>(true);
   const [followed, setFollowed] = useState<boolean>(false);
   const id = getCurrentUser().userData.id;
+  let is_processing = false;
 
   const handleFollow = async () => {
+    if (is_processing) {
+      return;
+    }
+    is_processing = true;
+
     try {
       const post_data = {
         follower_id: id,
@@ -40,14 +46,20 @@ export default function UserPage({ params }: { params: UserPageProps }) {
       if (!response.ok) {
         throw new Error("Failed to follow user");
       }
+      setFollowed(true);
+      setFollowers((prev) => (parseInt(prev) + 1).toString());
     } catch (error) {
       console.log(error);
+    } finally {
+      is_processing = false;
     }
-    setFollowed(true);
-    setFollowers((prev) => (parseInt(prev) + 1).toString());
   };
 
   const handleUnFollow = async () => {
+    if (is_processing) {
+      return;
+    }
+    is_processing = true;
     try {
       const post_data = {
         follower_id: id,
@@ -61,11 +73,13 @@ export default function UserPage({ params }: { params: UserPageProps }) {
       if (!response.ok) {
         throw new Error("Failed to unfollow user");
       }
+      setFollowed(false);
+      setFollowers((prev) => (parseInt(prev) - 1).toString());
     } catch (error) {
       console.log(error);
+    } finally {
+      is_processing = false;
     }
-    setFollowed(false);
-    setFollowers((prev) => (parseInt(prev) - 1).toString());
   };
 
   useEffect(() => {
