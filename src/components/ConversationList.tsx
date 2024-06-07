@@ -40,29 +40,29 @@ const ConversationList = ({ conversationIds, id }: ConversationListProps) => {
     }
   }, [id]);
 
-  if (conversationIds.length === 0) {
-    return (
-      <div className="flex flex-col">
-        {friendList.map((friend) => (
+  return (
+    <div className="flex flex-col">
+      {friendList.length !== 0 ? (
+        friendList.map((friend) =>
+          conversationIds.length !== 0 ? (
             <ConversationBox
                 key={friend}
                 id={friend}
-                selected={friend === current_message_id}
+                conversationId={conversationIds[friendList.indexOf(friend)]}
+                selected={friend === current_message_id} />
+          ) : (
+            <ConversationBox
+              key={friend}
+              id={friend}
+              selected={friend === current_message_id}
             />
-        ))}
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col">
-      {conversationIds.map((convo) => (
-        <ConversationBox
-          key={convo}
-          id={convo}
-          selected={convo === current_message_id}
-        />
-      ))}
+          )
+        )
+      ) : (
+        <div className="w-[20vw] justify-center items-center text-center text-[20px] font-bold">
+          No friends to show
+        </div>
+      )}
     </div>
   );
 };

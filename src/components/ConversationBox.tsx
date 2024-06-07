@@ -5,10 +5,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 interface ConversationBoxProps {
   id: string;
+  conversationId?: string;
   selected: boolean;
 }
 
-const ConversationBox = ({ id, selected }: ConversationBoxProps) => {
+const ConversationBox = ({ id, conversationId ,selected }: ConversationBoxProps) => {
   const [friendName, setFriendName] = useState("");
   const [friendProfile, setFriendProfile] = useState("");
   const router = useRouter();
