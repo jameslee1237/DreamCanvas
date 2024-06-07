@@ -19,7 +19,33 @@ export default function UserPage() {
   const user_id = getCurrentUser().userData.id;
 
   const handlePostDelete = async (postId: string) => {
-    console.log("need deleting logic")
+    try {
+      const res = await fetch("/api/post?post_id=" + postId)
+      if (!res.ok) {
+        throw new Error("Failed to delete post");
+      }
+      const data = await res.json();
+      const key = data.post.image.split("/").pop();
+      const formData = new FormData();
+      formData.append("delete", key);
+      const deletes3 = await fetch("/api/s3-upload", {
+        method: "POST",
+        body: formData,
+      });
+      if (!deletes3.ok) {
+        throw new Error("Failed to delete image from s3");
+      }
+      const deleteData = await fetch("/api/post", {
+        method: "POST",
+        body: JSON.stringify({ postId: postId, del: true }),
+      });
+      if (!deleteData.ok) {
+        throw new Error("Failed to delete post");
+      }
+      setImages(images.filter((image) => image !== data.post.image));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {

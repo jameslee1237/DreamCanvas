@@ -7,6 +7,7 @@ import PostCard from "@/components/PostCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { notFound } from "next/navigation";
 import CheckIcon from "@mui/icons-material/Check";
+import { getCurrentUser } from "@/app/actions/getCurrentUser";
 
 interface UserPageProps {
   userId: string;
@@ -23,12 +24,46 @@ export default function UserPage({ params }: { params: UserPageProps }) {
   const [profile, setProfile] = useState<string>("");
   const [exists, setExists] = useState<boolean>(true);
   const [followed, setFollowed] = useState<boolean>(false);
+  const id = getCurrentUser().userData.id;
 
   const handleFollow = async () => {
+    try {
+      const post_data = {
+        follower_id: id,
+        following_id: params.userId,
+        create: true
+      }
+      const response = await fetch("/api/follow", {
+        method: "POST",
+        body: JSON.stringify(post_data),
+      })
+      if (!response.ok) {
+        throw new Error("Failed to follow user");
+      }
+    } catch (error) {
+      console.log(error);
+    }
     setFollowed(true);
+
   };
 
   const handleUnFollow = async () => {
+    try {
+      const post_data = {
+        follower_id: id,
+        following_id: params.userId,
+        create: false
+      }
+      const response = await fetch("/api/follow", {
+        method: "POST",
+        body: JSON.stringify(post_data),
+      })
+      if (!response.ok) {
+        throw new Error("Failed to unfollow user");
+      }
+    } catch (error) {
+      console.log(error);
+    }
     setFollowed(false);
   };
 
@@ -82,9 +117,32 @@ export default function UserPage({ params }: { params: UserPageProps }) {
           console.log(error);
         }
       };
+
+      const checkFollow = async () => {
+        try {
+          const response = await fetch(
+            `/api/follow?follower_id=${id}&following_id=${params.userId}`
+          );
+          if (!response.ok) {
+            throw new Error("Failed to check follow");
+          }
+          const data = await response.json();
+          if (data.follow) {
+            setFollowed(true);
+          }
+          else {
+            setFollowed(false);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      if (id !== ""){
+        checkFollow();
+      }
       fetchPost();
     }
-  }, [params.userId]);
+  }, [params.userId, id]);
 
   if (!exists) {
     return notFound();
