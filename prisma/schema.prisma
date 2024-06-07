@@ -34,8 +34,8 @@ model User {
   email        String
   profileImage String?
   posts        Post[]
-  followers    Follow[]   @relation("UserFollowers")
-  following    Follow[]   @relation("UserFollowing")
+  followers    Follow[]   @relation("FollowingUsers")
+  following    Follow[]   @relation("FollowedUsers")
   likes        Like[]
   saves        Save[]
   comments     Comment[]
@@ -73,8 +73,8 @@ model Follow {
   id             String @id @default(uuid()) @map("_id")
   followerId     String
   followingId    String
-  follower       User   @relation("UserFollowers", fields: [followerId], references: [id])
-  following      User   @relation("UserFollowing", fields: [followingId], references: [id])
+  follower       User   @relation("FollowedUsers", fields: [followerId], references: [id])
+  following      User   @relation("FollowingUsers", fields: [followingId], references: [id])
 
   @@unique (fields: [followerId, followingId], name: "search_follow")
 }

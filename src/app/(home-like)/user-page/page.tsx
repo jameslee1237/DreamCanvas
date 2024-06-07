@@ -114,8 +114,8 @@ export default function UserPage() {
           <table className="w-[20vw]">
             <tbody>
               <tr>
-                <th className="w-[36%]">{following}</th>
-                <th className="w-[28%]">{followers}</th>
+                <th className="w-[36%]">{followers}</th>
+                <th className="w-[28%]">{following}</th>
                 <th className="w-[36%]">{images.length}</th>
               </tr>
               <tr>

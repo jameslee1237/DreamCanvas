@@ -16,8 +16,8 @@ interface UserPageProps {
 export default function UserPage({ params }: { params: UserPageProps }) {
   const [images, setImages] = useState<string[]>([]);
   const [postids, setPostIds] = useState<string[]>([]);
-  const [following, setFollowing] = useState<string[]>([]);
-  const [followers, setFollowers] = useState<string[]>([]);
+  const [following, setFollowing] = useState("");
+  const [followers, setFollowers] = useState("");
   const [savedposts, setSavedposts] = useState<string[]>([]);
   const [savedpostids, setSavedpostIds] = useState<string[]>([]);
   const [userName, setUserName] = useState<string>("");
@@ -44,7 +44,7 @@ export default function UserPage({ params }: { params: UserPageProps }) {
       console.log(error);
     }
     setFollowed(true);
-
+    setFollowers((prev) => (parseInt(prev) + 1).toString());
   };
 
   const handleUnFollow = async () => {
@@ -65,6 +65,7 @@ export default function UserPage({ params }: { params: UserPageProps }) {
       console.log(error);
     }
     setFollowed(false);
+    setFollowers((prev) => (parseInt(prev) - 1).toString());
   };
 
   useEffect(() => {
@@ -117,32 +118,34 @@ export default function UserPage({ params }: { params: UserPageProps }) {
           console.log(error);
         }
       };
-
-      const checkFollow = async () => {
-        try {
-          const response = await fetch(
-            `/api/follow?follower_id=${id}&following_id=${params.userId}`
-          );
-          if (!response.ok) {
-            throw new Error("Failed to check follow");
-          }
-          const data = await response.json();
-          if (data.follow) {
-            setFollowed(true);
-          }
-          else {
-            setFollowed(false);
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      if (id !== ""){
-        checkFollow();
-      }
       fetchPost();
     }
-  }, [params.userId, id]);
+  }, [params.userId]);
+
+  useEffect(() => {
+    const checkFollow = async () => {
+      try {
+        const response = await fetch(
+          `/api/follow?follower_id=${id}&following_id=${params.userId}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to check follow");
+        }
+        const data = await response.json();
+        if (data.follow) {
+          setFollowed(true);
+        }
+        else {
+          setFollowed(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (id !== ""){
+      checkFollow();
+    }
+  }, [id]);
 
   if (!exists) {
     return notFound();
@@ -181,8 +184,8 @@ export default function UserPage({ params }: { params: UserPageProps }) {
           <table className="w-[20vw]">
             <tbody>
               <tr>
-                <th className="w-[36%]">{following}</th>
-                <th className="w-[28%]">{followers}</th>
+                <th className="w-[36%]">{followers}</th>
+                <th className="w-[28%]">{following}</th>
                 <th className="w-[36%]">{images.length}</th>
               </tr>
               <tr>
