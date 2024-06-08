@@ -45,7 +45,7 @@ export async function POST (req: Request) {
 
     const eventType = evt.type
     if (eventType === 'user.created') {
-        await prisma.user.create({
+        const user = await prisma.user.create({
             data: {
                 clerkId: payload.data.id,
                 firstName: payload.data.first_name,
@@ -55,6 +55,7 @@ export async function POST (req: Request) {
                 profileImage: payload.data.image_url
             }
         })
+        return new Response(JSON.stringify(user), { status: 200 })
     }
 
     if (eventType === 'user.updated') {

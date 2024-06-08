@@ -11,10 +11,14 @@ const Sidebar = ({
     children: React.ReactNode;
 }) => {
     const [convList, setConvList] = useState<string[]>([]);
+    const [value, setValue] = useState("");
 
-    const convo = [{id: "1", conversation: "Conversation 1"}, {id: "2", conversation: "Conversation 2"}]
     const id = getCurrentUser().userData.id;
-    
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setValue(e.target.value);
+        console.log(convList);
+    }
+
     const getConvo = async () => {
         try {
             const res = await fetch(`/api/conversation?curr_id=${id}`);
@@ -41,7 +45,7 @@ const Sidebar = ({
                 </div>
                 <div className="flex flex-col">
                     <div className="flex flex-col p-3 items-center">
-                        <Input placeholder="Search" className="text-[14px] w-[90%]" />
+                        <Input placeholder="Search" value={value} onChange={handleChange} className="text-[14px] w-[90%]" />
                     </div>
                     <ConversationList conversationIds={convList} id={id} />
                 </div>

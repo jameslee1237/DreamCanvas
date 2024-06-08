@@ -14,6 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { getCurrentUser } from "@/app/actions/getCurrentUser";
 
 interface PostCardProps {
   image: string;
@@ -22,7 +23,7 @@ interface PostCardProps {
 }
 
 const PostCard = ({ image, postid, onDelete }: PostCardProps) => {
-  const [id, setId] = useState("");
+  const id = getCurrentUser().userData.id;
   const [userName, setUserName] = useState("");
   const [profile, setProfile] = useState("");
   const [comments, setComments] = useState<string[] | null>(null);
@@ -73,7 +74,6 @@ const PostCard = ({ image, postid, onDelete }: PostCardProps) => {
         throw new Error("Failed to fetch post");
       }
       const data = await res.json();
-      setId(data.post.authorId);
       const res2 = await fetch(
         `/api/user?authorId=${data.post.authorId}&post=false`
       );

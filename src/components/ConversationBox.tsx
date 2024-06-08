@@ -9,9 +9,14 @@ interface ConversationBoxProps {
   selected: boolean;
 }
 
-const ConversationBox = ({ id, conversationId ,selected }: ConversationBoxProps) => {
+const ConversationBox = ({
+  id,
+  conversationId,
+  selected,
+}: ConversationBoxProps) => {
   const [friendName, setFriendName] = useState("");
   const [friendProfile, setFriendProfile] = useState("");
+  const [lastMsg, setLastMsg] = useState("");
   const router = useRouter();
   const handleClick = () => {
     router.push(`/message/${id}`);
@@ -20,6 +25,19 @@ const ConversationBox = ({ id, conversationId ,selected }: ConversationBoxProps)
   useEffect(() => {
     const fetchFriend = async () => {
       try {
+        if (conversationId) {
+          const _res = await fetch(
+            `/api/conversation?convo_id=${conversationId}`
+          );
+          const _data = await _res.json();
+          const lastMessageAt = _data.conversation.lastMessageAt;
+          const lastMessage = _data.conversation.messages.find(
+            (msg: any) => msg.createdAt === lastMessageAt
+          );
+          if (lastMessage) {
+            setLastMsg(lastMessage.content);
+          }
+        }
         const res = await fetch(`/api/user?authorId=${id}`);
         const data = await res.json();
         setFriendName(data.user.userName);
@@ -31,7 +49,7 @@ const ConversationBox = ({ id, conversationId ,selected }: ConversationBoxProps)
     if (id) {
       fetchFriend();
     }
-  }, [id]);
+  }, [id, conversationId]);
 
   return (
     <div
@@ -40,12 +58,13 @@ const ConversationBox = ({ id, conversationId ,selected }: ConversationBoxProps)
       }`}
       onClick={handleClick}
     >
-      <div className="flex">
+      <div className="flex items-center">
         <Avatar>
           <AvatarImage src={friendProfile} />
         </Avatar>
-        <div className="flex ml-4 mt-2">
+        <div className="flex flex-col ml-4 mt-2">
           <h1>{friendName}</h1>
+          <h2 className="text-[12px] text-gray-600">{lastMsg}</h2>
         </div>
       </div>
     </div>
