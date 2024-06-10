@@ -91,7 +91,7 @@ const PostCard = ({ image, postid, onDelete }: PostCardProps) => {
     if (dialogOpen) {
       setfullVal("");
       setfullTyped(false);
-      window.history.replaceState(null, '', "/user-page");
+      window.history.replaceState(null, "", "/user-page");
     }
     setDialogOpen((prev) => !prev);
   };
@@ -133,15 +133,15 @@ const PostCard = ({ image, postid, onDelete }: PostCardProps) => {
   const copyLink = () => {
     navigator.clipboard.writeText(
       window.location.href.substring(0, window.location.href.lastIndexOf("/")) +
-        "/feed/" +
+        "/" +
         postid
     );
   };
 
   const handleDialogOpen = () => {
     setDialogOpen(true);
-    window.history.replaceState(null, '', "/feed/" + postid);
-  }
+    window.history.replaceState(null, "", "/feed/" + postid);
+  };
 
   const getComments = async (p_id: string) => {
     try {
