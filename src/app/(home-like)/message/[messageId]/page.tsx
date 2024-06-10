@@ -3,7 +3,6 @@ import { getCurrentUser } from "@/app/actions/getCurrentUser";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import React, { useEffect, useState } from "react";
 
 interface Params {

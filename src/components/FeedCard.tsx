@@ -13,13 +13,9 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { ScrollArea } from "./ui/scroll-area";
-import { Separator } from "./ui/separator";
-import { getCurrentUser } from "@/app/actions/getCurrentUser";
 import Comment from "@/components/Comment";
 import { Skeleton } from "@/components/ui/skeleton";
-import { feedcardutil } from "@/app/actions/feedcardutil";  
+import { feedcardutil } from "@/app/actions/feedcardutil";
 
 interface FeedCardProps {
   image: string;
@@ -40,17 +36,11 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
   const effectRan = useRef(false);
 
   const {
-    dialogOpen,
     val,
     typed,
-    fullval,
-    fulltyped,
     setDialogOpen,
     setVal,
-    setfullVal,
     hasTyped,
-    hasTypedFull,
-    handleDialogOpenChange,
   } = feedcardutil();
 
   const getAuthorData = async (post_id: string) => {
@@ -61,7 +51,9 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
       }
       const data = await res.json();
       const p_authorId = data.post.authorId;
-      const _res = await fetch(`/api/post?post_id=${post_id}&userId=${curr_id}`);
+      const _res = await fetch(
+        `/api/post?post_id=${post_id}&userId=${curr_id}`
+      );
       if (!_res.ok) {
         throw new Error("Failed to fetch post");
       }
@@ -78,32 +70,6 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
       }
       const data_user = await res_user.json();
       return data_user;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handlefullValComment = async () => {
-    try {
-      const commentData = {
-        comment: fullval,
-        postId: postid,
-        authorId: curr_id,
-      };
-      const res = await fetch("/api/comment/new", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(commentData),
-      });
-      if (!res.ok) {
-        throw new Error("Failed to create comment");
-      }
-      setfullVal("");
-
-      setComments((prevComments) => prevComments ? [...prevComments, fullval] : [fullval]);
-      setAuthorIds((prevAuthorIds) => prevAuthorIds ? [...prevAuthorIds, curr_id] : [curr_id]);
     } catch (error) {
       console.log(error);
     }
@@ -128,8 +94,12 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
       }
       setVal("");
 
-      setComments((prevComments) => prevComments ? [...prevComments, val] : [val]);
-      setAuthorIds((prevAuthorIds) => prevAuthorIds ? [...prevAuthorIds, curr_id] : [curr_id]);
+      setComments((prevComments) =>
+        prevComments ? [...prevComments, val] : [val]
+      );
+      setAuthorIds((prevAuthorIds) =>
+        prevAuthorIds ? [...prevAuthorIds, curr_id] : [curr_id]
+      );
     } catch (error) {
       console.log(error);
     }
@@ -140,7 +110,7 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
       const likeData = {
         postId: postid,
         userId: curr_id,
-        add: !liked
+        add: !liked,
       };
       const res = await fetch("/api/like", {
         method: "POST",
@@ -156,11 +126,11 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
   };
 
   const handleSaves = async () => {
-    try{
+    try {
       const saveData = {
         postId: postid,
         userId: curr_id,
-        add: !saved
+        add: !saved,
       };
       const res = await fetch("/api/save", {
         method: "POST",
@@ -279,85 +249,6 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
                   NoAvatar={true}
                 />
               )}
-            </div>
-            <div className="flex">
-              <Dialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
-                <DialogTrigger asChild>
-                  <button className="text-gray-500">See more comments</button>
-                </DialogTrigger>
-                <DialogContent>
-                  <div className="flex h-full">
-                    <div className="flex h-full bg-black items-center justify-center w-1/2">
-                      {image ? (
-                        <Image
-                          src={image}
-                          alt="test"
-                          sizes="512px"
-                          style={{
-                            width: portrait ? "auto" : "100%",
-                            height: portrait ? "100%" : "auto",
-                          }}
-                          priority={true}
-                          width={2500}
-                          height={1668}
-                        />
-                      ) : (
-                        <div>
-                          <Skeleton className="w-[512px] h-[400px] rounded-md" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex flex-col w-1/2 max-h-full">
-                      <div className="flex ml-4 mt-4 mb-4">
-                        <Avatar className="hidden h-9 w-9 sm:flex">
-                          <AvatarImage src={profileImage} alt="Avatar" />
-                          <AvatarFallback className="bg-green-200">
-                            OM
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="grid gap-1">
-                          <h1 className="text-[16px] ml-2 font-bold text-black text-muted-foreground mt-1">
-                            {userName}
-                          </h1>
-                        </div>
-                      </div>
-                      <Separator />
-                      <div className="flex w-full h-[75%] max-h-full">
-                        <ScrollArea className="w-full mb-4 max-h-[75vh] overflow-hidden">
-                          {comments &&
-                            authorIds &&
-                            comments.map((commentf, index) => (
-                              <div key={index}>
-                                <Comment
-                                  comment={commentf}
-                                  authorId={authorIds[index]}
-                                />
-                                <Separator className="mt-4" />
-                              </div>
-                            ))}
-                        </ScrollArea>
-                      </div>
-                      <Separator />
-                      <div className="flex mt-4 mx-4">
-                        <Input
-                          fullWidth={true}
-                          value={fullval}
-                          placeholder="Add a comment..."
-                          onChange={hasTypedFull}
-                        />
-                        {fulltyped && (
-                          <button
-                            onClick={handlefullValComment}
-                            className="bg-green-400 hover:bg-green-700 rounded-md px-2 py-1 ml-4"
-                          >
-                            Post
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
             </div>
             <div className="flex w-full">
               <Input

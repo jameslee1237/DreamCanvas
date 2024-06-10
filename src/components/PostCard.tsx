@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { getCurrentUser } from "@/app/actions/getCurrentUser";
+import { useRouter } from "next/navigation";
 
 interface PostCardProps {
   image: string;
@@ -34,6 +35,7 @@ const PostCard = ({ image, postid, onDelete }: PostCardProps) => {
   const [portrait, setPortrait] = useState<boolean | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [deleting, setDeleting] = useState<boolean | null>(null);
+  const router = useRouter();
 
   const hasTypedFull = (e: ChangeEvent<HTMLInputElement>) => {
     const typedValue = e.target.value;
@@ -44,7 +46,7 @@ const PostCard = ({ image, postid, onDelete }: PostCardProps) => {
   const handleDelete = async () => {
     setDeleting(true);
     setDropdownOpen(false);
-    setTimeout(() => setDialogOpen(false), 50);
+    await setTimeout(() => setDialogOpen(false), 50);
   };
 
   const handleClose = () => {
@@ -57,7 +59,7 @@ const PostCard = ({ image, postid, onDelete }: PostCardProps) => {
       window.confirm("Are you sure you want to delete this item?")
     ) {
       setDeleting(false);
-      if (onDelete){
+      if (onDelete) {
         onDelete();
       }
     }
@@ -89,6 +91,7 @@ const PostCard = ({ image, postid, onDelete }: PostCardProps) => {
     if (dialogOpen) {
       setfullVal("");
       setfullTyped(false);
+      window.history.replaceState(null, '', "/user-page");
     }
     setDialogOpen((prev) => !prev);
   };
@@ -126,6 +129,19 @@ const PostCard = ({ image, postid, onDelete }: PostCardProps) => {
       console.log(error);
     }
   };
+
+  const copyLink = () => {
+    navigator.clipboard.writeText(
+      window.location.href.substring(0, window.location.href.lastIndexOf("/")) +
+        "/feed/" +
+        postid
+    );
+  };
+
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+    window.history.replaceState(null, '', "/feed/" + postid);
+  }
 
   const getComments = async (p_id: string) => {
     try {
@@ -167,7 +183,7 @@ const PostCard = ({ image, postid, onDelete }: PostCardProps) => {
 
   return (
     <div className="flex w-[300px] h-[200px] bg-white">
-      <button onClick={() => setDialogOpen(true)} className="w-full">
+      <button onClick={handleDialogOpen} className="w-full">
         <div className="w-full h-full overflow-hidden">
           <Image
             src={image}
@@ -190,12 +206,16 @@ const PostCard = ({ image, postid, onDelete }: PostCardProps) => {
                   onOpenChange={handleDropDownOpenChange}
                 >
                   <DropdownMenuTrigger asChild>
-                    {onDelete ? <button>
-                      <EllipsisVerticalIcon
-                        onClick={() => setDropdownOpen(true)}
-                        className="absolute top-4 right-2"
-                      />
-                    </button> : <div></div>}
+                    {onDelete ? (
+                      <button>
+                        <EllipsisVerticalIcon
+                          onClick={() => setDropdownOpen(true)}
+                          className="absolute top-4 right-2"
+                        />
+                      </button>
+                    ) : (
+                      <div></div>
+                    )}
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="absolute -top-[300px] -right-[1000px]">
                     <DropdownMenuItem
@@ -204,7 +224,9 @@ const PostCard = ({ image, postid, onDelete }: PostCardProps) => {
                     >
                       Delete
                     </DropdownMenuItem>
-                    <DropdownMenuItem>Copy Link</DropdownMenuItem>
+                    <DropdownMenuItem onClick={copyLink}>
+                      Copy Link
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={handleClose}>
                       Cancel
                     </DropdownMenuItem>
