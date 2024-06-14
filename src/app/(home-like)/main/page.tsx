@@ -184,6 +184,7 @@ export default function Home() {
     try {
       const res = await fetch("/api/user?list=true");
       const data = await res.json();
+      console.log(data);
       const ids = data.users.map((user: any) => user.id);
       const usernames = data.users.map((user: any) => user.userName);
       const images = data.users.map((user: any) => user.profileImage);

@@ -242,7 +242,7 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
   if (loading) {
     return (
       <div className="flex min-h-screen bg-[#3c023e] flex-col">
-        <div className="flex flex-col mt-[5vh]">
+        <div className="flex flex-col">
           <Skeleton className="w-[400px] h-[300px] rounded-xl" />
         </div>
       </div>
