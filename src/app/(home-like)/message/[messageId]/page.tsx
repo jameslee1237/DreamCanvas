@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/app/actions/getCurrentUser";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import React, { useEffect, useState } from "react";
 
 interface Params {
@@ -19,6 +20,7 @@ export default function MessagePage({ params }: { params: Params }) {
   const [authorIds, setAuthorIds] = useState<string[]>([]);
   const [times, setTimes] = useState<string[]>([]);
   const [convoId, setConvoId] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const getConvo = async (userId: string) => {
     if (userId === "1") {
@@ -138,8 +140,22 @@ export default function MessagePage({ params }: { params: Params }) {
   useEffect(() => {
     if (userId && id) {
       getConvo(userId);
+      setTimeout(() => {
+        setLoading(false);
+      
+      }, 1000)
     }
   }, [userId, id]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen bg-[#3c023e] flex-col w-[57vw]">
+        <div className="flex mt-[5vh] justify-center items-center">
+          <Skeleton className="w-[50vw] h-[80vh] rounded-xl" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col relative w-[57vw] overflow-hidden">

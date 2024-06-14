@@ -35,14 +35,9 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
     undefined
   );
   const effectRan = useRef(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const {
-    val,
-    typed,
-    setDialogOpen,
-    setVal,
-    hasTyped,
-  } = feedcardutil();
+  const { val, typed, setDialogOpen, setVal, hasTyped } = feedcardutil();
 
   const getAuthorData = async (post_id: string) => {
     try {
@@ -106,7 +101,7 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
           user_id: authorId,
           involved: curr_id,
           content: "commented on your post",
-        }
+        };
         const res = await fetch("/api/notification", {
           method: "POST",
           headers: {
@@ -146,7 +141,7 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
           user_id: authorId,
           involved: curr_id,
           content: "liked your post",
-        }
+        };
         const res = await fetch("/api/notification", {
           method: "POST",
           headers: {
@@ -186,7 +181,7 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
           user_id: authorId,
           involved: curr_id,
           content: "saved your post",
-        }
+        };
         const res = await fetch("/api/notification", {
           method: "POST",
           headers: {
@@ -232,6 +227,25 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
     }
   }, [postid, curr_id]);
 
+  useEffect(() => {
+    if (
+      comments &&
+      authorIds &&
+      profileImage &&
+      userName
+    ) {
+      setLoading(false);
+    }
+  }, [comments, authorIds, profileImage, userName]);
+
+  if (loading) {
+    return (
+      <div>
+        <Skeleton className="w-[400px] h-[300px] rounded-md" />
+      </div>
+    );
+  }
+
   return (
     <div className="w-[35vw]">
       <Card className="w-full h-full bg-[#3c023e] border-0 flex flex-col">
@@ -251,7 +265,11 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
         <CardContent>
           <button onClick={() => setDialogOpen(true)} className="w-full">
             {image ? (
-              <Link href={`/feed/${postid}`} rel="preload" as={`/feed/${postid}`} >
+              <Link
+                href={`/feed/${postid}`}
+                rel="preload"
+                as={`/feed/${postid}`}
+              >
                 <Image
                   src={image}
                   alt="test"

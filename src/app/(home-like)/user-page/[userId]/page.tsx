@@ -23,8 +23,10 @@ export default function UserPage({ params }: { params: UserPageProps }) {
   const [userName, setUserName] = useState<string>("");
   const [profile, setProfile] = useState<string>("");
   const [exists, setExists] = useState<boolean>(true);
-  const [followed, setFollowed] = useState<boolean>(false);
+  const [followed, setFollowed] = useState<boolean | null>(null);
   const id = getCurrentUser().userData.id;
+  const [loading, setLoading] = useState(0);
+  const total = 2;
   let is_processing = false;
 
   const handleFollow = async () => {
@@ -166,6 +168,7 @@ export default function UserPage({ params }: { params: UserPageProps }) {
 
       if(params.userId){
         fetchPost();
+        setLoading((prev) => prev + 1);
       }
     }
   }, [params.userId]);
@@ -195,8 +198,25 @@ export default function UserPage({ params }: { params: UserPageProps }) {
     }
   }, [id]);
 
+  useEffect(() => {
+    if (followed !== null){
+      setLoading((prev) => prev + 1);
+    }
+  }, [followed])
+
   if (!exists) {
     return notFound();
+  }
+
+  if (loading < total) {
+    return (
+      <div className="flex min-h-screen bg-[#3c023e] flex-col">
+        <div className="flex flex-col mt-[5vh]">
+          <Skeleton className="w-[70vw] h-[40vh] rounded-xl ml-20" />
+          <Skeleton className="w-[70vw] h-[30vh] rounded-xl mt-20 ml-20 " />
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -207,7 +227,6 @@ export default function UserPage({ params }: { params: UserPageProps }) {
       <div className="flex w-full flex-col items-center mt-10">
         <Avatar className="h-36 w-36 mb-4">
           <AvatarImage src={profile}></AvatarImage>
-          <AvatarFallback>JL</AvatarFallback>
         </Avatar>
         <div className="flex justify-center text-center">
           <h1 className="text-[30px] font-bold">{userName}</h1>

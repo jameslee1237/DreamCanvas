@@ -38,6 +38,7 @@ export default function Home() {
   const [profile, setProfile] = useState<string>("");
   const [usernames, setUsernames] = useState<string[]>([]);
   const [followed, setFollowed] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const router = useRouter();
   const handleAvatarClick = () => {
@@ -221,10 +222,22 @@ export default function Home() {
     };
     if (userids && id && user) {
       checkFollow();
+      setLoading(false);
     }
   }, [userids, user, id]);
 
   if (!isLoaded || !isSignedIn || extractData === null) {
+    return (
+      <div className="flex min-h-screen bg-[#3c023e] flex-col">
+        <div className="flex flex-col mt-[5vh]">
+          <Skeleton className="w-[70vw] h-[40vh] rounded-xl ml-20" />
+          <Skeleton className="w-[70vw] h-[30vh] rounded-xl mt-20 ml-20 " />
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
     return (
       <div className="flex min-h-screen bg-[#3c023e] flex-col">
         <div className="flex flex-col mt-[5vh]">

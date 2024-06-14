@@ -12,11 +12,12 @@ export default function UserPage() {
   const { isLoaded, isSignedIn, user } = useUser();
   const [images, setImages] = useState<string[]>([]);
   const [postids, setPostIds] = useState<string[]>([]);
-  const [following, setFollowing] = useState<string[]>([]);
-  const [followers, setFollowers] = useState<string[]>([]);
+  const [following, setFollowing] = useState<string | null>(null);
+  const [followers, setFollowers] = useState<string | null>(null);
   const [savedposts, setSavedposts] = useState<string[]>([]);
   const [savedpostids, setSavedpostIds] = useState<string[]>([]);
   const user_id = getCurrentUser().userData.id;
+  const [loading, setLoading] = useState(false);
 
   const handlePostDelete = async (postId: string) => {
     try {
@@ -95,8 +96,33 @@ export default function UserPage() {
     }
   }, [user_id]);
 
+  useEffect(() => {
+    if (followers && following) {
+      setLoading(false);
+    }
+  }, [followers, following]);
+
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen bg-[#3c023e] flex-col">
+        <div className="flex flex-col mt-[5vh]">
+          <Skeleton className="w-[70vw] h-[40vh] rounded-xl ml-20" />
+          <Skeleton className="w-[70vw] h-[30vh] rounded-xl mt-20 ml-20 " />
+        </div>
+      </div>
+    );
+  }
+
   if (!isLoaded || !isSignedIn) {
-    return null;
+    return (
+      <div className="flex min-h-screen bg-[#3c023e] flex-col">
+        <div className="flex flex-col mt-[5vh]">
+          <Skeleton className="w-[70vw] h-[40vh] rounded-xl ml-20" />
+          <Skeleton className="w-[70vw] h-[30vh] rounded-xl mt-20 ml-20 " />
+        </div>
+      </div>
+    );
   }
 
   return (
