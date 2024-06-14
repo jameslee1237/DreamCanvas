@@ -2,11 +2,11 @@ import React, { ReactNode } from "react";
 
 export default function FeedLayout({ 
   children, 
-  dialog 
+  dialog,
 } : { 
-  children: ReactNode,
-  dialog: ReactNode }
-) {
+  children: ReactNode
+  dialog: ReactNode 
+}) {
     return (
       <>
         {children}
