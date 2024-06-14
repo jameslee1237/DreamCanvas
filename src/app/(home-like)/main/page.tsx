@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/popover_Search";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import Link from "next/link";
 
 export default function Home() {
   const [extractData, setExtractData] = useState<
@@ -193,27 +192,21 @@ export default function Home() {
           </div>
         </div>
         <div className="flex flex-col items-center">
-          <Link href={`/feed/${randomItem.id}`} rel="preload" as={`feed/${randomItem.id}`} >
-            <FeedCard
-              image={randomItem.image}
-              postid={randomItem.id}
-              curr_id={id}
-            />
-          </Link>
-          <Link href={`/feed/${randomItem1.id}`} rel="preload" as={`feed/${randomItem1.id}`}>
-            <FeedCard
-              image={randomItem1.image}
-              postid={randomItem1.id}
-              curr_id={id}
-            />
-          </Link>
-          <Link href={`/feed/${randomItem2.id}`} rel="preload" as={`feed/${randomItem2.id}`}>
-            <FeedCard
-              image={randomItem2.image}
-              postid={randomItem2.id}
-              curr_id={id}
-            />
-          </Link>
+          <FeedCard
+            image={randomItem.image}
+            postid={randomItem.id}
+            curr_id={id}
+          />
+          <FeedCard
+            image={randomItem1.image}
+            postid={randomItem1.id}
+            curr_id={id}
+          />
+          <FeedCard
+            image={randomItem2.image}
+            postid={randomItem2.id}
+            curr_id={id}
+          />
         </div>
       </div>
       <div className="flex w-[30vw]">

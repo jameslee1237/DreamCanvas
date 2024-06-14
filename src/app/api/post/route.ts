@@ -37,7 +37,6 @@ export async function GET(req: NextRequest) {
       }
     } else {
       const posts = await getPost();
-
       return NextResponse.json({ success: true, posts });
     }
   } catch (error) {

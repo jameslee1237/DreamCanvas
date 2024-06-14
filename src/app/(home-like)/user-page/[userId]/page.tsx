@@ -47,6 +47,22 @@ export default function UserPage({ params }: { params: UserPageProps }) {
         throw new Error("Failed to follow user");
       }
       setFollowed(true);
+      const notification_data = {
+        user_id: params.userId,
+        involved: id,
+        content: "started following you",
+      }
+      const res = await fetch("/api/notification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(notification_data),
+      })
+      if (!res.ok) {
+        throw new Error("Failed to send notification");
+      }
+      const result = await res.json();
       setFollowers((prev) => (parseInt(prev) + 1).toString());
     } catch (error) {
       console.log(error);
@@ -74,6 +90,21 @@ export default function UserPage({ params }: { params: UserPageProps }) {
         throw new Error("Failed to unfollow user");
       }
       setFollowed(false);
+      const notification_data = {
+        user_id: params.userId,
+        involved: id,
+        content: "has unfollowed you",
+      }
+      const res = await fetch("/api/notification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(notification_data),
+      })
+      if (!res.ok) {
+        throw new Error("Failed to send notification");
+      }
       setFollowers((prev) => (parseInt(prev) - 1).toString());
     } catch (error) {
       console.log(error);

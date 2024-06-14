@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Comment from "@/components/Comment";
 import { Skeleton } from "@/components/ui/skeleton";
 import { feedcardutil } from "@/app/actions/feedcardutil";
+import Link from "next/link";
 
 interface FeedCardProps {
   image: string;
@@ -27,12 +28,12 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
   const [comments, setComments] = useState<string[] | null>(null);
   const [authorIds, setAuthorIds] = useState<string[] | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
+  const [authorId, setAuthorId] = useState<string | null>(null);
   const [liked, setLiked] = useState<boolean>(false);
   const [saved, setSaved] = useState<boolean>(false);
   const [profileImage, setProfileImage] = useState<string | undefined>(
     undefined
   );
-  const [portrait, setPortrait] = useState<boolean | null>(null);
   const effectRan = useRef(false);
 
   const {
@@ -51,6 +52,7 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
       }
       const data = await res.json();
       const p_authorId = data.post.authorId;
+      setAuthorId(p_authorId);
       const _res = await fetch(
         `/api/post?post_id=${post_id}&userId=${curr_id}`
       );
@@ -93,7 +95,23 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
         throw new Error("Failed to create comment");
       }
       setVal("");
-
+      if (authorId && authorId !== curr_id) {
+        const notifData = {
+          user_id: authorId,
+          involved: curr_id,
+          content: "commented on your post",
+        }
+        const res = await fetch("/api/notification", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(notifData),
+        });
+        if (!res.ok) {
+          throw new Error("Failed to create notification");
+        }
+      }
       setComments((prevComments) =>
         prevComments ? [...prevComments, val] : [val]
       );
@@ -119,6 +137,26 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
         },
         body: JSON.stringify(likeData),
       });
+      if (!res.ok) {
+        throw new Error("Failed to like post");
+      }
+      if (authorId && authorId !== curr_id) {
+        const notifData = {
+          user_id: authorId,
+          involved: curr_id,
+          content: "liked your post",
+        }
+        const res = await fetch("/api/notification", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(notifData),
+        });
+        if (!res.ok) {
+          throw new Error("Failed to create notification");
+        }
+      }
       setLiked((prev) => !prev);
     } catch (error) {
       console.log(error);
@@ -139,6 +177,26 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
         },
         body: JSON.stringify(saveData),
       });
+      if (!res.ok) {
+        throw new Error("Failed to save post");
+      }
+      if (authorId && authorId !== curr_id) {
+        const notifData = {
+          user_id: authorId,
+          involved: curr_id,
+          content: "saved your post",
+        }
+        const res = await fetch("/api/notification", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(notifData),
+        });
+        if (!res.ok) {
+          throw new Error("Failed to create notification");
+        }
+      }
       setSaved((prev) => !prev);
     } catch (error) {
       console.log(error);
@@ -159,17 +217,6 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
   };
 
   useEffect(() => {
-    if (image === "") {
-      return;
-    }
-    const img = new window.Image();
-    img.src = image;
-    img.onload = () => {
-      setPortrait(img.width < img.height);
-    };
-  }, [image]);
-
-  useEffect(() => {
     if (effectRan.current) return;
     const fetchData = async () => {
       const data = await getAuthorData(postid);
@@ -179,11 +226,11 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
       setComments(data2.comments.map((comment: any) => comment.comment));
       setAuthorIds(data2.comments.map((comment: any) => comment.authorId));
     };
-    if (postid) {
+    if (postid && curr_id) {
       fetchData();
       effectRan.current = true;
     }
-  }, [postid]);
+  }, [postid, curr_id]);
 
   return (
     <div className="w-[35vw]">
@@ -204,18 +251,20 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
         <CardContent>
           <button onClick={() => setDialogOpen(true)} className="w-full">
             {image ? (
-              <Image
-                src={image}
-                alt="test"
-                sizes="35vw"
-                style={{
-                  width: "100%",
-                  height: "auto",
-                }}
-                priority={true}
-                width={2500}
-                height={1668}
-              />
+              <Link href={`/feed/${postid}`} rel="preload" as={`feed/${postid}`} >
+                <Image
+                  src={image}
+                  alt="test"
+                  sizes="35vw"
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                  }}
+                  priority={true}
+                  width={2500}
+                  height={1668}
+                />
+              </Link>
             ) : (
               <div>
                 <Skeleton className="w-[400px] h-[400px] rounded-md" />

@@ -21,6 +21,7 @@ export default function ImagePage({ params }: { params: Params }) {
   const [image, setImage] = useState("");
   const [comments, setComments] = useState<string[] | null>(null);
   const [authorIds, setAuthorIds] = useState<string[] | null>(null);
+  const [authorId, setAuthorId] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | undefined>(
     undefined
@@ -49,6 +50,7 @@ export default function ImagePage({ params }: { params: Params }) {
       }
       const data = await res.json();
       const p_authorId = data.post.authorId;
+      setAuthorId(p_authorId);
       const res_user = await fetch(`/api/user?authorId=${p_authorId}`);
       if (!res_user.ok) {
         throw new Error("Failed to fetch user");
@@ -91,7 +93,23 @@ export default function ImagePage({ params }: { params: Params }) {
         throw new Error("Failed to create comment");
       }
       setfullVal("");
-
+      if (authorId && curr_id !== authorId) {
+        const notifData = {
+          user_id: authorId,
+          involved: curr_id,
+          content: "commented on your post",
+        };
+        const _res = await fetch("/api/notification/new", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(notifData),
+        });
+        if (!_res.ok) {
+          throw new Error("Failed to create notification");
+        }
+      }
       setComments((prevComments) =>
         prevComments ? [...prevComments, fullval] : [fullval]
       );

@@ -15,7 +15,6 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { getCurrentUser } from "@/app/actions/getCurrentUser";
-import { useRouter } from "next/navigation";
 
 interface PostCardProps {
   image: string;
@@ -29,13 +28,13 @@ const PostCard = ({ image, postid, onDelete }: PostCardProps) => {
   const [profile, setProfile] = useState("");
   const [comments, setComments] = useState<string[] | null>(null);
   const [authorIds, setAuthorIds] = useState<string[] | null>(null);
+  const [postauthor, setPostAuthor] = useState<string>("");
   const [fullval, setfullVal] = useState("");
   const [fulltyped, setfullTyped] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [portrait, setPortrait] = useState<boolean | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [deleting, setDeleting] = useState<boolean | null>(null);
-  const router = useRouter();
 
   const hasTypedFull = (e: ChangeEvent<HTMLInputElement>) => {
     const typedValue = e.target.value;
@@ -76,6 +75,7 @@ const PostCard = ({ image, postid, onDelete }: PostCardProps) => {
         throw new Error("Failed to fetch post");
       }
       const data = await res.json();
+      setPostAuthor(data.post.authorId);
       const res2 = await fetch(
         `/api/user?authorId=${data.post.authorId}&post=false`
       );
@@ -91,7 +91,7 @@ const PostCard = ({ image, postid, onDelete }: PostCardProps) => {
     if (dialogOpen) {
       setfullVal("");
       setfullTyped(false);
-      window.history.replaceState(null, "", "/user-page");
+      window.history.replaceState(null, "", "/user-page/" + postauthor);
     }
     setDialogOpen((prev) => !prev);
   };

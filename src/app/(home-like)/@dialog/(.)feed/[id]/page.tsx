@@ -2,7 +2,13 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { MouseEventHandler, useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Input from "@mui/material/Input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { feedcardutil } from "@/app/actions/feedcardutil";
@@ -31,6 +37,7 @@ export default function ImagePage({ params }: { params: Params }) {
   const [image, setImage] = useState("");
   const [comments, setComments] = useState<string[] | null>(null);
   const [authorIds, setAuthorIds] = useState<string[] | null>(null);
+  const [authorId, setAuthorId] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | undefined>(
     undefined
@@ -62,6 +69,7 @@ export default function ImagePage({ params }: { params: Params }) {
       }
       const data = await res.json();
       const p_authorId = data.post.authorId;
+      setAuthorId(p_authorId);
       const res_user = await fetch(`/api/user?authorId=${p_authorId}`);
       if (!res_user.ok) {
         throw new Error("Failed to fetch user");
@@ -91,7 +99,23 @@ export default function ImagePage({ params }: { params: Params }) {
         throw new Error("Failed to create comment");
       }
       setfullVal("");
-
+      if (authorId && authorId !== curr_id) {
+        const notifData = {
+          user_id: authorId,
+          involved: curr_id,
+          content: "commented on your post",
+        };
+        const _res = await fetch("/api/notification/new", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(notifData),
+        });
+        if (!_res.ok) {
+          throw new Error("Failed to create notification");
+        }
+      }
       setComments((prevComments) =>
         prevComments ? [...prevComments, fullval] : [fullval]
       );
@@ -118,7 +142,7 @@ export default function ImagePage({ params }: { params: Params }) {
 
   const copyLink = () => {
     navigator.clipboard.writeText(window.location.href);
-  }
+  };
 
   const onDismiss = useCallback(() => {
     router.back();
@@ -191,7 +215,9 @@ export default function ImagePage({ params }: { params: Params }) {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="absolute -top-[300px] -right-[1000px]">
-                <DropdownMenuItem onClick={copyLink}>Copy Link</DropdownMenuItem>
+                <DropdownMenuItem onClick={copyLink}>
+                  Copy Link
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleClose}>
                   Cancel
                 </DropdownMenuItem>
