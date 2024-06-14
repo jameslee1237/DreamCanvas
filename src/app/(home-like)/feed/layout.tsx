@@ -1,13 +1,15 @@
 import React, { ReactNode } from "react";
 
-export default function Layout(props: {
-    dialog: ReactNode;
-    children: ReactNode;
-  }) {
+interface LayoutProps {
+  dialog: ReactNode;
+  children: ReactNode;
+}
+
+export default function Layout({children, dialog}: LayoutProps) {
     return (
       <>
-        {props.children}
-        {props.dialog}
+        {children}
+        {dialog}
       </>
     );
   }

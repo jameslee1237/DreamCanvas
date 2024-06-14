@@ -11,12 +11,12 @@ import CreatePostButton from "@/components/CreatePostButton";
 import NotifButton from "@/components/NotifButton";
 import { Skeleton } from "@/components/ui/skeleton";
 
-
-
-export default function ExperienceDetailLayout(props: {
+interface EDlayoutProps {
     children: React.ReactNode;
     dialog: React.ReactNode;
-}) {
+}
+
+export default function ExperienceDetailLayout({children, dialog} : EDlayoutProps) {
     const router = useRouter();
 
     const handleprofilebutton = () => {
@@ -90,8 +90,8 @@ export default function ExperienceDetailLayout(props: {
                         </div>
                     </div>
                     <div className="flex ml-[18.5vw]">
-                        {props.children}
-                        {props.dialog}
+                        {children}
+                        {dialog}
                     </div>
                 </div>
             </>
