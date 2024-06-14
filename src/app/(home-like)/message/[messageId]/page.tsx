@@ -178,14 +178,14 @@ export default function MessagePage({ params }: { params: Params }) {
                     className="flex bg-green-300 py-2 px-4 max-w-[40vw] rounded-r-md self-start"
                   >
                     <h1>{msg}</h1>
-                    <h2 className="text-[10px] ml-2 self-end">{times[idx]}</h2>
+                    <h2 className="text-[10px] ml-2 self-end w-[6vw]">{times[idx]}</h2>
                   </div>
                 ) : (
                   <div
                     key={msg}
                     className="flex bg-slate-500 py-2 px-4 max-w-[40vw] rounded-l-md self-end"
                   >
-                    <h2 className="text-[10px] mr-2 self-end">{times[idx]}</h2>
+                    <h2 className="text-[10px] mr-2 self-end w-[6vw]">{times[idx]}</h2>
                     <h1>{msg}</h1>
                   </div>
                 )

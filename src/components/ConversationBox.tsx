@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarImage } from "./ui/avatar";
 
 interface ConversationBoxProps {
   id: string;
@@ -16,7 +16,7 @@ const ConversationBox = ({
 }: ConversationBoxProps) => {
   const [friendName, setFriendName] = useState("");
   const [friendProfile, setFriendProfile] = useState("");
-  const [lastMsg, setLastMsg] = useState("");
+  const [lastMsg, setLastMsg] = useState<string | null>(null);
   const router = useRouter();
   const handleClick = () => {
     router.push(`/message/${id}`);
@@ -30,12 +30,15 @@ const ConversationBox = ({
             `/api/conversation?convo_id=${conversationId}`
           );
           const _data = await _res.json();
-          const lastMessageAt = _data.conversation.lastMessageAt;
-          const lastMessage = _data.conversation.messages.find(
-            (msg: any) => msg.createdAt === lastMessageAt
-          );
-          if (lastMessage) {
-            setLastMsg(lastMessage.content);
+          if (_data.conversation.messages.length !== 0) {
+            const lastMessageAt = _data.conversation.lastMessageAt;
+            const lastMessage = _data.conversation.messages.find(
+              (msg: any) => msg.createdAt === lastMessageAt
+            );
+            setLastMsg(lastMessage.content)
+          }
+          else {
+            setLastMsg(" ")
           }
         }
         const res = await fetch(`/api/user?authorId=${id}`);

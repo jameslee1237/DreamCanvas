@@ -5,7 +5,7 @@ import ConversationBox from "./ConversationBox";
 import { Skeleton } from "./ui/skeleton";
 
 interface ConversationListProps {
-  conversationIds: string[];
+  conversationIds: string[][];
   id: string;
 }
 
@@ -39,12 +39,35 @@ const ConversationList = ({ conversationIds, id }: ConversationListProps) => {
     };
     if (id) {
       getFriends();
+    }
+  }, [id]);
+
+  useEffect(() => {
+    const sortListBasedOnSecondArray = (friendList: string[], conversationIds: string[][]) => {
+      const orderMap = new Map();
+      conversationIds.forEach(([_, id], index) => {
+        orderMap.set(id, index);
+      });
+      const sortedList = friendList.slice().sort((a, b) => {
+        const aOrder = orderMap.has(a) ? orderMap.get(a) : Infinity;
+        const bOrder = orderMap.has(b) ? orderMap.get(b) : Infinity;
+        return aOrder - bOrder;
+      });
+    
+      return sortedList;
+    };
+
+    if (friendList.length !== 0 && conversationIds.length !== 0) {
+      const sortedFriends = sortListBasedOnSecondArray(friendList, conversationIds);
+      if (JSON.stringify(sortedFriends) !== JSON.stringify(friendList)) {
+        setFriendList(sortedFriends);
+      }
       //To ensure that the skeleton is shown until data is fully loaded
       setTimeout(() => {
         setLoading(false);
-      }, 1000)
+      }, 1000);
     }
-  }, [id]);
+  }, [friendList, conversationIds]);
 
   if (loading) {
     return (
@@ -59,12 +82,12 @@ const ConversationList = ({ conversationIds, id }: ConversationListProps) => {
   return (
     <div className="flex flex-col">
       {friendList.length !== 0 ? (
-        friendList.map((friend) =>
-          conversationIds.length !== 0 ? (
+        friendList.map((friend, index) =>
+          index < conversationIds.length && conversationIds.length !== 0 ? (
             <ConversationBox
               key={friend}
               id={friend}
-              conversationId={conversationIds[friendList.indexOf(friend)]}
+              conversationId={conversationIds[friendList.indexOf(friend)][0]}
               selected={friend === current_message_id}
             />
           ) : (
