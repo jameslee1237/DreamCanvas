@@ -216,6 +216,7 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
     const fetchData = async () => {
       const data = await getAuthorData(postid);
       const data2 = await getComments(postid);
+      console.log(data2);
       setUserName(data.user.userName);
       setProfileImage(data.user.profileImage);
       setComments(data2.comments.map((comment: any) => comment.comment));
