@@ -28,8 +28,9 @@ export const getCurrentUser = () => {
                 setLoading(false);
             }
         };
-
-        getUserData();
+        if (user?.id) {
+            getUserData();
+        }
     }, [isLoaded, user?.id]);
 
     return { isLoaded, loading, userData };
