@@ -1,13 +1,10 @@
 import Link from "next/link";
 import React from "react";
+import { redirect } from "next/navigation";
 
 export default function FeedPage() {
     return (
-        <div className="flex flex-col">
-            Feed Page
-            <Link href="/feed/1">
-                temp
-            </Link>
-        </div>
+        redirect("/main")
     )
 }
+
