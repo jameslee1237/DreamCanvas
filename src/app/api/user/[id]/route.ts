@@ -13,7 +13,7 @@ export async function GET(req: Request, { params }: { params: Params }) {
                 clerkId: id
             }
         })
-        return NextResponse.json(User);
+        return NextResponse.json({success: true, user: User});
     }
     catch (error) {
         console.log(error);
