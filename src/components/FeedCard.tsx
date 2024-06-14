@@ -78,6 +78,12 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
   };
 
   const handleValComment = async () => {
+    setComments((prevComments) =>
+      prevComments ? [...prevComments, val] : [val]
+    );
+    setAuthorIds((prevAuthorIds) =>
+      prevAuthorIds ? [...prevAuthorIds, curr_id] : [curr_id]
+    );
     try {
       const commentData = {
         comment: val,
@@ -112,12 +118,6 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
           throw new Error("Failed to create notification");
         }
       }
-      setComments((prevComments) =>
-        prevComments ? [...prevComments, val] : [val]
-      );
-      setAuthorIds((prevAuthorIds) =>
-        prevAuthorIds ? [...prevAuthorIds, curr_id] : [curr_id]
-      );
     } catch (error) {
       console.log(error);
     }
@@ -130,6 +130,7 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
         userId: curr_id,
         add: !liked,
       };
+      setLiked((prev) => !prev);
       const res = await fetch("/api/like", {
         method: "POST",
         headers: {
@@ -157,7 +158,6 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
           throw new Error("Failed to create notification");
         }
       }
-      setLiked((prev) => !prev);
     } catch (error) {
       console.log(error);
     }
@@ -170,6 +170,7 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
         userId: curr_id,
         add: !saved,
       };
+      setSaved((prev) => !prev);
       const res = await fetch("/api/save", {
         method: "POST",
         headers: {
@@ -197,7 +198,6 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
           throw new Error("Failed to create notification");
         }
       }
-      setSaved((prev) => !prev);
     } catch (error) {
       console.log(error);
     }
@@ -251,7 +251,7 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
         <CardContent>
           <button onClick={() => setDialogOpen(true)} className="w-full">
             {image ? (
-              <Link href={`/feed/${postid}`} rel="preload" as={`feed/${postid}`} >
+              <Link href={`/feed/${postid}`} rel="preload" as={`/feed/${postid}`} >
                 <Image
                   src={image}
                   alt="test"

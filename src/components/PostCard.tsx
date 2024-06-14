@@ -101,6 +101,12 @@ const PostCard = ({ image, postid, onDelete }: PostCardProps) => {
   };
 
   const handlefullValComment = async () => {
+    setComments((prevComments) =>
+      prevComments ? [...prevComments, fullval] : [fullval]
+    );
+    setAuthorIds((prevAuthorIds) =>
+      prevAuthorIds ? [...prevAuthorIds, id] : [id]
+    );
     try {
       const commentData = {
         comment: fullval,
@@ -118,13 +124,6 @@ const PostCard = ({ image, postid, onDelete }: PostCardProps) => {
         throw new Error("Failed to create comment");
       }
       setfullVal("");
-
-      setComments((prevComments) =>
-        prevComments ? [...prevComments, fullval] : [fullval]
-      );
-      setAuthorIds((prevAuthorIds) =>
-        prevAuthorIds ? [...prevAuthorIds, id] : [id]
-      );
     } catch (error) {
       console.log(error);
     }

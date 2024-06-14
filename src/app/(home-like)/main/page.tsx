@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/popover_Search";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { CheckIcon } from "lucide-react";
 
 export default function Home() {
   const [extractData, setExtractData] = useState<
@@ -36,6 +37,8 @@ export default function Home() {
   const [userids, setUserids] = useState<string[]>([]);
   const [profile, setProfile] = useState<string>("");
   const [usernames, setUsernames] = useState<string[]>([]);
+  const [followed, setFollowed] = useState(false);
+
   const router = useRouter();
   const handleAvatarClick = () => {
     router.push("/user-page");
@@ -66,6 +69,91 @@ export default function Home() {
 
   const { isLoaded, isSignedIn, user } = useUser();
   const id = getCurrentUser().userData.id;
+  let is_processing = false;
+
+  const handleFollow = async (following_id: string) => {
+    if (is_processing) {
+      return;
+    }
+    is_processing = true;
+
+    try {
+      const post_data = {
+        follower_id: id,
+        following_id: following_id,
+        create: true,
+      };
+      const response = await fetch("/api/follow", {
+        method: "POST",
+        body: JSON.stringify(post_data),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to follow user");
+      }
+      setFollowed(true);
+      const notification_data = {
+        user_id: following_id,
+        involved: id,
+        content: "started following you",
+      };
+      const res = await fetch("/api/notification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(notification_data),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to send notification");
+      }
+      const result = await res.json();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      is_processing = false;
+    }
+  };
+
+  const handleUnFollow = async (following_id: string) => {
+    if (is_processing) {
+      return;
+    }
+    is_processing = true;
+    try {
+      const post_data = {
+        follower_id: id,
+        following_id: following_id,
+        create: false,
+      };
+      const response = await fetch("/api/follow", {
+        method: "POST",
+        body: JSON.stringify(post_data),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to unfollow user");
+      }
+      setFollowed(false);
+      const notification_data = {
+        user_id: following_id,
+        involved: id,
+        content: "has unfollowed you",
+      };
+      const res = await fetch("/api/notification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(notification_data),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to send notification");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      is_processing = false;
+    }
+  };
 
   const getPost = async () => {
     try {
@@ -110,6 +198,31 @@ export default function Home() {
     getPost();
     getUsers();
   }, []);
+
+  useEffect(() => {
+    const checkFollow = async () => {
+      const index = usernames.findIndex(
+        // @ts-ignore
+        (username) => username !== user.username
+      );
+      const check_id = userids[index];
+      const res = await fetch(
+        `/api/follow?follower_id=${id}&following_id=${check_id}`
+      );
+      if (!res.ok) {
+        throw new Error("Failed to check follow");
+      }
+      const data = await res.json();
+      if (data.follow) {
+        setFollowed(true);
+      } else {
+        setFollowed(false);
+      }
+    };
+    if (userids && id && user) {
+      checkFollow();
+    }
+  }, [userids, user, id]);
 
   if (!isLoaded || !isSignedIn || extractData === null) {
     return (
@@ -241,21 +354,67 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-4">
-                  <Avatar className="hidden h-12 w-12 sm:flex">
-                    <AvatarImage src="" alt="Avatar" />
-                    <AvatarFallback>OM</AvatarFallback>
-                  </Avatar>
-                  <div className="grid gap-1">
-                    <h1 className="text-sm font-semibold leading-none">
-                      Olivia Martin
-                    </h1>
-                    <h1 className="text-sm text-muted-foreground text-gray-600">
-                      o_martin_0987
-                    </h1>
-                  </div>
-                  <Button size="sm" className="ml-14">
-                    follow
-                  </Button>
+                  {usernames.findIndex(
+                    (username) => username !== user.username
+                  ) ? (
+                    <div className="flex justify-center items-center">
+                      <Avatar className="h-12 w-12 sm:flex">
+                        <AvatarImage
+                          src={
+                            profile[
+                              usernames.findIndex(
+                                (username) => username !== user.username
+                              )
+                            ]
+                          }
+                        ></AvatarImage>
+                      </Avatar>
+                      <div className="flex ml-1">
+                        <h1 className="text-sm font-semibold leading-none">
+                          {
+                            usernames[
+                              usernames.findIndex(
+                                (username) => username !== user.username
+                              )
+                            ]
+                          }
+                        </h1>
+                      </div>
+                    </div>
+                  ) : null}
+                  {followed ? (
+                    <Button
+                      className="flex justify-center bg-green-400"
+                      onClick={() =>
+                        handleUnFollow(
+                          userids[
+                            usernames.findIndex(
+                              (username) => username !== user.username
+                            )
+                          ]
+                        )
+                      }
+                    >
+                      <CheckIcon className="mr-2" />
+                      followed
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      className="ml-14"
+                      onClick={() =>
+                        handleFollow(
+                          userids[
+                            usernames.findIndex(
+                              (username) => username !== user.username
+                            )
+                          ]
+                        )
+                      }
+                    >
+                      follow
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>
