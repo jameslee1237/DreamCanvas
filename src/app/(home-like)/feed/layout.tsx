@@ -1,15 +1,15 @@
 import React, { ReactNode } from "react";
 
-interface LayoutProps {
+interface FeedLayoutProps {
   dialog: ReactNode;
   children: ReactNode;
 }
 
-export default function Layout({children, dialog}: LayoutProps) {
+export default function FeedLayout({children, dialog}: FeedLayoutProps) {
     return (
-      <>
+      <div>
         {children}
         {dialog}
-      </>
+      </div>
     );
   }
