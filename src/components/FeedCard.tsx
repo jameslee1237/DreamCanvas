@@ -225,9 +225,19 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
     if (postid && curr_id) {
       fetchData();
       effectRan.current = true;
-      setLoading(false);
     }
   }, [postid, curr_id]);
+
+  useEffect(() => {
+    if (
+      comments &&
+      authorIds &&
+      profileImage &&
+      userName
+    ) {
+      setLoading(false);
+    }
+  }, [comments, authorIds, profileImage, userName]);
 
   if (loading) {
     return (

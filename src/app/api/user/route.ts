@@ -3,11 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/client";
 
 export async function GET(req: NextRequest) {
+    const { searchParams } = new URL(req.url);
+    const authorId = searchParams.get("authorId");
+    const post_bool = searchParams.get("post");
+    const list = searchParams.get("list");
     try {
-        const { searchParams } = new URL(req.url);
-        const authorId = searchParams.get("authorId");
-        const post_bool = searchParams.get("post");
-        const list = searchParams.get("list");
         if (authorId) {
             if (!post_bool) {
                 const user = await prisma.user.findUnique({

@@ -3,10 +3,10 @@ import { NextResponse, NextRequest } from "next/server";
 import { getPost } from "@/app/actions/getPost";
 
 export async function GET(req: NextRequest) {
+  const { searchParams } = req.nextUrl;
+  const post_id = searchParams.get("post_id");
+  const userId = searchParams.get("userId");
   try {
-    const { searchParams } = req.nextUrl;
-    const post_id = searchParams.get("post_id");
-    const userId = searchParams.get("userId");
     if (post_id) {
       if (!userId) {
         const post = await prisma.post.findUnique({
