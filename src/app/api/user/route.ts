@@ -7,6 +7,7 @@ export async function GET(req: NextRequest) {
     const authorId = searchParams.get("authorId");
     const post_bool = searchParams.get("post");
     const list = searchParams.get("list");
+    const query = searchParams.get("query");
     try {
         if (authorId) {
             if (!post_bool) {
@@ -41,6 +42,25 @@ export async function GET(req: NextRequest) {
                 }    
                 return NextResponse.json({ success: true, user });
             }
+        }
+        else if (query) {
+            const ids = query.split(",");
+            const users = await prisma.user.findMany({
+                where: {
+                    id: {
+                     in: ids
+                    }
+                },
+                select: {
+                    id: true,
+                    userName: true,
+                }
+            });
+            if (!users) {
+                throw new Error("Users not found");
+            }
+            const sortedUsers = ids.map((id) => users.find((user) => user.id === id));
+            return NextResponse.json({ success: true, users: sortedUsers });
         }
         else {
             if(!list) {
