@@ -34,7 +34,7 @@ const ConversationList = ({ friendList, conversationIds, id }: ConversationListP
           )
         )
       ) : (
-        <div className="w-[32vw] justify-center items-center text-center text-[20px] font-bold">
+        <div className="w-[23vw] justify-center items-center text-center text-[20px] font-bold">
           No friends to show
         </div>
       )}

@@ -16,17 +16,27 @@ const Sidebar = ({ children }: { children: React.ReactNode }) => {
 
   const id = getCurrentUser().userData.id;
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
-    if (e.target.value === "") {
-      setValue(e.target.value);
-      setSortedList(friendList);
-    } else {
-      setValue(e.target.value);
-      const temp = friendNames.filter((name) =>
-        name.toLowerCase().includes(e.target.value.toLowerCase())
+    const inputValue = e.target.value;
+    console.log(inputValue);
+  
+    setValue(inputValue);
+  
+    if (inputValue === "") {
+      setFriendList(sortedList);
+    } else if (
+      e.nativeEvent instanceof InputEvent &&
+      e.nativeEvent.inputType === "deleteContentBackward"
+    ) {
+      setFriendList(sortedList); 
+      const filteredFriends = friendList.filter((name: any, index) =>
+        friendNames[index].toLowerCase().includes(inputValue.toLowerCase())
       );
-      const indexes = temp.map((name) => friendNames.indexOf(name));
-      setSortedList(indexes.map((index) => sortedList[index]));
+      setFriendList(filteredFriends);
+    } else {
+      const filteredFriends = friendList.filter((name: any, index) =>
+        friendNames[index].toLowerCase().includes(inputValue.toLowerCase())
+      );
+      setFriendList(filteredFriends);
     }
   };
 
@@ -156,7 +166,7 @@ const Sidebar = ({ children }: { children: React.ReactNode }) => {
             )}
           </div>
           <ConversationList
-            friendList={sortedList}
+            friendList={friendList}
             conversationIds={convList}
             id={id}
           />
