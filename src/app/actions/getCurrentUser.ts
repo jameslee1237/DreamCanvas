@@ -16,22 +16,23 @@ export const getCurrentUser = () => {
     });
     const [ loading, setLoading ] = useState(true);
 
+
     useEffect(() => {
         const getUserData = async () => {
-            if (isLoaded) {
-                const response = await fetch(`/api/user/${user?.id}`);
+            if (isLoaded && isSignedIn) {
+                const response = await fetch(`/api/user/${user.id}`);
                 const data = await response.json();
                 setUserData(prevUserData => ({
                     ...prevUserData,
-                    ...data
+                    ...data.user
                 }));
                 setLoading(false);
             }
         };
-        if (user?.id) {
+        if (isSignedIn) {
             getUserData();
         }
-    }, [isLoaded, user?.id]);
+    }, [isLoaded, isSignedIn]);
 
     return { isLoaded, loading, userData };
 }

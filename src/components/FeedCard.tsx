@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardFooter,
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import Comment from "@/components/Comment";
 import { Skeleton } from "@/components/ui/skeleton";
 import { feedcardutil } from "@/app/actions/feedcardutil";
@@ -35,7 +35,7 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
     undefined
   );
   const effectRan = useRef(false);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
 
   const { val, typed, setDialogOpen, setVal, hasTyped } = feedcardutil();
 
@@ -221,29 +221,22 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
       setComments(data2.comments.map((comment: any) => comment.comment));
       setAuthorIds(data2.comments.map((comment: any) => comment.authorId));
     };
+
     if (postid && curr_id) {
       fetchData();
       effectRan.current = true;
+      setLoading(false);
     }
   }, [postid, curr_id]);
 
-  useEffect(() => {
-    if (
-      comments &&
-      authorIds &&
-      profileImage &&
-      userName
-    ) {
-      setLoading(false);
-    }
-  }, [comments, authorIds, profileImage, userName]);
-
   if (loading) {
     return (
-      <div>
-        <Skeleton className="w-[400px] h-[300px] rounded-md" />
+      <div className="flex min-h-screen bg-[#3c023e] flex-col">
+        <div className="flex flex-col mt-[5vh]">
+          <Skeleton className="w-[400px] h-[300px] rounded-xl" />
+        </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -253,7 +246,6 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
           <div className="flex gap-4">
             <Avatar className="hidden h-9 w-9 sm:flex">
               <AvatarImage src={profileImage} alt="Avatar" />
-              <AvatarFallback>OM</AvatarFallback>
             </Avatar>
             <div className="grid gap-1">
               <h1 className="text-md text-white text-muted-foreground mt-1">
