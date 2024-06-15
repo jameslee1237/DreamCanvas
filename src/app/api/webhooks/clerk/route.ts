@@ -38,7 +38,7 @@ export async function POST (req: Request) {
         }) as WebhookEvent
     } catch (err) {
         console.log('Error verifying webhook: ', err)
-        return new Response('Error occured' + err, {
+        return new Response('Error occured' + body, {
             status: 400
         })
     }
