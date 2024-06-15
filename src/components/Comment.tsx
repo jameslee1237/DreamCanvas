@@ -13,6 +13,7 @@ const Comment = (
 ) => {
     const [username, setUsername] = useState<string | undefined>(""); 
     const [profileImage, setProfileImage] = useState<string | undefined>("");
+    const [loading, setLoading] = useState<boolean>(true);
     const getUserId = async (authorId: string) => {
         try {
             const res = await fetch(`/api/user?authorId=${authorId}`);
@@ -34,10 +35,13 @@ const Comment = (
         };
         if (authorId) {
             fetchData();
+            setTimeout(() => {
+                setLoading(false);
+            })
         }
     }, [authorId]);
 
-    if (username === "" || username === undefined) {
+    if (loading) {
         return (
             <div>
                 <Skeleton className="w-[90%] h-[50px]" />
@@ -45,13 +49,6 @@ const Comment = (
         )
     }
 
-    if (comment === "" || comment === undefined) {
-        return (
-            <div>
-                <Skeleton className="w-[90%] h-[50px]" />
-            </div>
-        )
-    }
     return (
         <div className="flex w-full items-center mt-4">
             <div className="flex">
