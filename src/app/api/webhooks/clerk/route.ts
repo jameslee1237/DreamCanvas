@@ -34,11 +34,11 @@ export async function POST (req: Request) {
         evt = wh.verify(body, {
             "svix-id": svix_id,
             "svix-timestamp": svix_timestamp,
-            "svix-signature": svix_signature
+            "svix-signature": svix_signature,
         }) as WebhookEvent
     } catch (err) {
         console.log('Error verifying webhook: ', err)
-        return new Response('Error occured' + body, {
+        return new Response('Error occured' + err, {
             status: 400
         })
     }
