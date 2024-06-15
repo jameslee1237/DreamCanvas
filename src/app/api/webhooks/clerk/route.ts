@@ -60,7 +60,7 @@ export async function POST (req: Request) {
 
     if (eventType === 'user.updated') {
         try{
-            await prisma.user.update({
+            const user = await prisma.user.update({
                 where: {
                     clerkId: payload.data.id,
                 }, 
@@ -72,10 +72,11 @@ export async function POST (req: Request) {
                     profileImage: payload.data.image_url
                 }
             })
+            return new Response(JSON.stringify(user), { status: 200 })
         }
         catch (e) {
             if (e instanceof PrismaClientKnownRequestError) {
-                await prisma.user.create({
+                const user = await prisma.user.create({
                     data: {
                         clerkId: payload.data.id,
                         firstName: payload.data.first_name,
@@ -85,6 +86,7 @@ export async function POST (req: Request) {
                         profileImage: payload.data.image_url
                     }
                 })
+                return new Response(JSON.stringify(user), { status: 200 })
             }
             else {
                 console.log(e)
@@ -98,6 +100,7 @@ export async function POST (req: Request) {
                 clerkId: payload.data.id
             }
         })
+        return new Response('', { status: 200 })
     }
     
     return new Response('', { status: 200 })
