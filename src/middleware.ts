@@ -2,7 +2,7 @@ import { authMiddleware, redirectToSignIn } from "@clerk/nextjs";
 import { NextResponse, NextRequest } from "next/server";
  
 export default authMiddleware({
-  publicRoutes: ['/', '/sign-in', '/sign-up'],
+  publicRoutes: ["/"],
   ignoredRoutes: ['/api/webhooks(.*)'],
   afterAuth(auth, req, evt) {
     if (auth.userId && (req.nextUrl.pathname === "/sign-in" || req.nextUrl.pathname === "/sign-up")) {

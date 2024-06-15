@@ -45,6 +45,7 @@ export async function POST (req: Request) {
 
     const eventType = evt.type
     if (eventType === 'user.created') {
+        console.log("user has been created")
         const user = await prisma.user.create({
             data: {
                 clerkId: payload.data.id,
@@ -55,7 +56,7 @@ export async function POST (req: Request) {
                 profileImage: payload.data.image_url
             }
         })
-        return new Response(JSON.stringify(user), { status: 200 })
+        return new Response("", { status: 200 })
     }
 
     if (eventType === 'user.updated') {
@@ -72,7 +73,7 @@ export async function POST (req: Request) {
                     profileImage: payload.data.image_url
                 }
             })
-            return new Response(JSON.stringify(user), { status: 200 })
+            return new Response("", { status: 200 })
         }
         catch (e) {
             if (e instanceof PrismaClientKnownRequestError) {
@@ -86,7 +87,7 @@ export async function POST (req: Request) {
                         profileImage: payload.data.image_url
                     }
                 })
-                return new Response(JSON.stringify(user), { status: 200 })
+                return new Response("", { status: 200 })
             }
             else {
                 console.log(e)
