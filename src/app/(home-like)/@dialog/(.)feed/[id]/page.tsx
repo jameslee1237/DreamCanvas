@@ -46,7 +46,8 @@ export default function ImagePage({ params }: { params: Params }) {
   const { fullval, fulltyped, setfullVal, hasTypedFull } = feedcardutil();
   const effectRan = useRef(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [auth, setAuth] = useState(false);
+  const [loading, setLoading] = useState(true);
+
 
   const getImage = async () => {
     try {
@@ -180,6 +181,9 @@ export default function ImagePage({ params }: { params: Params }) {
       fetchData();
       getImage();
       effectRan.current = true;
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000)
     }
   }, [imageId]);
 
@@ -256,7 +260,8 @@ export default function ImagePage({ params }: { params: Params }) {
             <Separator />
             <div className="flex w-full h-[75%] max-h-full">
               <ScrollArea className="w-full mb-4 max-h-[75vh] overflow-hidden">
-                {comments &&
+                {loading ? <Skeleton className="w-[30vw] h-[65vh] rounded-xl" /> 
+                : comments &&
                   authorIds &&
                   comments.map((commentf, index) => (
                     <div key={index}>
