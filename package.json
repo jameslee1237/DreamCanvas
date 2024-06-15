@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "push-db": "dotenv -e .env.local -- npx prisma db push",
-    "studio": "dotenv -e .env.local -- npx prisma studio"
+    "studio": "dotenv -e .env.local -- npx prisma studio",
+    "vercel-build": "prisma migrate deploy && npm run build"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.583.0",
