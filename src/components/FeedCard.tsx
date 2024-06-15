@@ -79,6 +79,7 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
     setAuthorIds((prevAuthorIds) =>
       prevAuthorIds ? [...prevAuthorIds, curr_id] : [curr_id]
     );
+    setVal("");
     try {
       const commentData = {
         comment: val,
@@ -95,7 +96,6 @@ const FeedCard = ({ image, postid, curr_id }: FeedCardProps) => {
       if (!res.ok) {
         throw new Error("Failed to create comment");
       }
-      setVal("");
       if (authorId && authorId !== curr_id) {
         const notifData = {
           user_id: authorId,

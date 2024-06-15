@@ -76,6 +76,13 @@ export default function ImagePage({ params }: { params: Params }) {
   };
 
   const handlefullValComment = async () => {
+    setComments((prevComments) =>
+      prevComments ? [...prevComments, fullval] : [fullval]
+    );
+    setAuthorIds((prevAuthorIds) =>
+      prevAuthorIds ? [...prevAuthorIds, curr_id] : [curr_id]
+    );
+    setfullVal("");
     try {
       const commentData = {
         comment: fullval,
@@ -92,7 +99,6 @@ export default function ImagePage({ params }: { params: Params }) {
       if (!res.ok) {
         throw new Error("Failed to create comment");
       }
-      setfullVal("");
       if (authorId && curr_id !== authorId) {
         const notifData = {
           user_id: authorId,
@@ -110,12 +116,6 @@ export default function ImagePage({ params }: { params: Params }) {
           throw new Error("Failed to create notification");
         }
       }
-      setComments((prevComments) =>
-        prevComments ? [...prevComments, fullval] : [fullval]
-      );
-      setAuthorIds((prevAuthorIds) =>
-        prevAuthorIds ? [...prevAuthorIds, curr_id] : [curr_id]
-      );
     } catch (error) {
       console.log(error);
     }
