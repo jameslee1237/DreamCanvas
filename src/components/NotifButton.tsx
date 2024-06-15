@@ -76,7 +76,7 @@ const NotifButton = () => {
         <PopoverTrigger asChild>
           <div className="flex w-[15vw]">
             <button className="py-3 w-[100%] rounded-md hover:bg-slate-500">
-              <NotificationsActiveIcon className="mr-2"></NotificationsActiveIcon>
+              <NotificationsActiveIcon className="mr-2" />
               Notifications
             </button>
           </div>
