@@ -1,112 +1,103 @@
-import { Webhook } from "svix";
-import { headers } from "next/headers";
-import { WebhookEvent } from "@clerk/nextjs/server";
+import { Webhook } from 'svix';
+import { headers } from 'next/headers';
+import { WebhookEvent } from '@clerk/nextjs/server';
 
-import { prisma } from "@/lib/client";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { prisma } from '@/lib/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
-export async function POST(req: Request) {
-  const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
+export async function POST (req: Request) {
+    const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
 
-  if (!WEBHOOK_SECRET) {
-    throw new Error("Clerk Webhook Secret not found");
-  }
-
-  const headerPayload = headers();
-  const svix_id = headerPayload.get("svix-id");
-  const svix_signature = headerPayload.get("svix-signature");
-  const svix_timestamp = headerPayload.get("svix-timestamp");
-
-  if (!svix_id || !svix_signature || !svix_timestamp) {
-    return new Response("Error - no header found", { status: 400 });
-  }
-
-  const payload = await req.json();
-  const body = JSON.stringify(payload);
-
-  const wh = new Webhook(WEBHOOK_SECRET);
-
-  let evt: WebhookEvent;
-
-  try {
-    evt = wh.verify(body, {
-      "svix-id": svix_id,
-      "svix-timestamp": svix_timestamp,
-      "svix-signature": svix_signature,
-    }) as WebhookEvent;
-  } catch (err) {
-    console.log("Error verifying webhook: ", err);
-    return new Response("Error occured", {
-      status: 400,
-    });
-  }
-
-  const eventType = evt.type;
-  if (eventType === "user.created") {
-    try {
-      const user = await prisma.user.create({
-        data: {
-          clerkId: payload.data.id,
-          firstName: payload.data.first_name,
-          lastName: payload.data.last_name,
-          email: payload.data.email_addresses[0].email_address,
-          userName: payload.data.username,
-          profileImage: payload.data.image_url,
-        },
-      });
-      const msg = "User created successfully!";
-      return new Response(JSON.stringify(msg), { status: 200 });
-    } catch (error) {
-      return new Response(JSON.stringify(error), { status: 400 });
+    if (!WEBHOOK_SECRET) {
+        throw new Error(
+            "Clerk Webhook Secret not found"
+        )
     }
-  }
 
-  if (eventType === "user.updated") {
-    try {
-      const user = await prisma.user.update({
-        where: {
-          clerkId: payload.data.id,
-        },
-        data: {
-          firstName: payload.data.first_name,
-          lastName: payload.data.last_name,
-          email: payload.data.email_addresses[0].email_address,
-          userName: payload.data.username,
-          profileImage: payload.data.image_url,
-        },
-      });
-      return new Response("", { status: 200 });
-    } catch (e) {
-      if (e instanceof PrismaClientKnownRequestError) {
-        const user = await prisma.user.create({
-          data: {
-            clerkId: payload.data.id,
-            firstName: payload.data.first_name,
-            lastName: payload.data.last_name,
-            email: payload.data.email_addresses[0].email_address,
-            userName: payload.data.username,
-            profileImage: payload.data.image_url,
-          },
-        });
-        return new Response("", { status: 200 });
-      } else {
-        console.log(e);
-      }
+    const headerPayload = headers()
+    const svix_id = headerPayload.get('svix-id')
+    const svix_signature = headerPayload.get('svix-signature')
+    const svix_timestamp = headerPayload.get('svix-timestamp')
+
+    if (!svix_id || !svix_signature || !svix_timestamp) {
+        return new Response("Error - no header found", { status: 400 })
     }
-  }
 
-  if (eventType === "user.deleted") {
+    const payload = await req.json()
+    const body = JSON.stringify(payload)
+
+    const wh = new Webhook(WEBHOOK_SECRET)
+
+    let evt: WebhookEvent
+
     try {
-      const user = await prisma.user.delete({
-        where: {
-          clerkId: payload.data.id,
-        },
-      });
-      return new Response("", { status: 200 });
-    } catch (error) {
-      return new Response(JSON.stringify(error), { status: 400 });
+        evt = wh.verify(body, {
+            "svix-id": svix_id,
+            "svix-timestamp": svix_timestamp,
+            "svix-signature": svix_signature
+        }) as WebhookEvent
+    } catch (err) {
+        console.log('Error verifying webhook: ', err)
+        return new Response('Error occured', {
+            status: 400
+        })
     }
-  }
 
-  return new Response("", { status: 200 });
+    const eventType = evt.type
+    if (eventType === 'user.created') {
+        await prisma.user.create({
+            data: {
+                clerkId: payload.data.id,
+                firstName: payload.data.first_name,
+                lastName: payload.data.last_name,
+                email: payload.data.email_addresses[0].email_address,
+                userName: payload.data.username,
+                profileImage: payload.data.image_url
+            }
+        })
+    }
+
+    if (eventType === 'user.updated') {
+        try{
+            await prisma.user.update({
+                where: {
+                    clerkId: payload.data.id,
+                }, 
+                data: {
+                    firstName: payload.data.first_name,
+                    lastName: payload.data.last_name,
+                    email: payload.data.email_addresses[0].email_address,
+                    userName: payload.data.username,
+                    profileImage: payload.data.image_url
+                }
+            })
+        }
+        catch (e) {
+            if (e instanceof PrismaClientKnownRequestError) {
+                await prisma.user.create({
+                    data: {
+                        clerkId: payload.data.id,
+                        firstName: payload.data.first_name,
+                        lastName: payload.data.last_name,
+                        email: payload.data.email_addresses[0].email_address,
+                        userName: payload.data.username,
+                        profileImage: payload.data.image_url
+                    }
+                })
+            }
+            else {
+                console.log(e)
+            }
+        }
+    }
+    
+    if (eventType === 'user.deleted') {
+        await prisma.user.delete({
+            where: {
+                clerkId: payload.data.id
+            }
+        })
+    }
+    
+    return new Response('', { status: 200 })
 }
