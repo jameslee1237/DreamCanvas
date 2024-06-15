@@ -17,27 +17,13 @@ const Sidebar = ({ children }: { children: React.ReactNode }) => {
   const id = getCurrentUser().userData.id;
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-    console.log(inputValue);
-  
     setValue(inputValue);
-  
-    if (inputValue === "") {
-      setFriendList(sortedList);
-    } else if (
-      e.nativeEvent instanceof InputEvent &&
-      e.nativeEvent.inputType === "deleteContentBackward"
-    ) {
-      setFriendList(sortedList); 
-      const filteredFriends = friendList.filter((name: any, index) =>
-        friendNames[index].toLowerCase().includes(inputValue.toLowerCase())
-      );
-      setFriendList(filteredFriends);
-    } else {
-      const filteredFriends = friendList.filter((name: any, index) =>
-        friendNames[index].toLowerCase().includes(inputValue.toLowerCase())
-      );
-      setFriendList(filteredFriends);
-    }
+    const filteredList = sortedList.filter((friend) =>
+      friendNames[sortedList.indexOf(friend)]
+        .toLowerCase()
+        .includes(inputValue.toLowerCase())
+    );
+    setFriendList((prev) => filteredList);
   };
 
   const getConvo = async () => {
